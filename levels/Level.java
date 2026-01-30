@@ -17,7 +17,7 @@ public class Level {
     }
 
     public boolean isSolid(int tileX, int tileY){
-        return levelData[tileY][tileX] >= 1 ;
+        return levelData[tileY][tileX] >= 0 ;
     }
 
     public int getMaxTileWidth(){
