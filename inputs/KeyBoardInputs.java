@@ -34,7 +34,7 @@ public class KeyBoardInputs implements KeyListener{
                 gamePanel.getGame().getPlayer().setRight(true);;
                 break;
             case KeyEvent.VK_E:
-                gamePanel.getGame().getPlayer().setAttacking(true);
+                gamePanel.getGame().getPlayer().setDashing(true);
                 break;
         }
     }
@@ -56,6 +56,5 @@ public class KeyBoardInputs implements KeyListener{
                 gamePanel.getGame().getPlayer().setRight(false);
                 break;
         }
-
     }
 }

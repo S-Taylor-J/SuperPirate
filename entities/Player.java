@@ -11,16 +11,23 @@ import utilz.LoadSave;
 
 
 public class Player extends Entity{
-    
+    // Animations
     private BufferedImage[][] animations;
     private int animTick, animIndex, animSpeed = 10;
     private int playerAction = IDLE;
-    private boolean moving = false, attacking = false;
+    private boolean moving = false;
+
+    // Movement Booleans
     private boolean left, up, right, down;
-    private boolean isFacingRight = true; 
+    private boolean isFacingRight = true;
+    private boolean isDashing = false; 
+    private long lastDashTime = 0;
+
+    // Player attributes
     private final int playerWidth = 136;
     private final int playerHeight = 93;
     private final float playerSpeed = 2.0f;
+    private final float dashMultiplier = 3.0f;
 
     // Player Hitbox 
     private final int hitboxOffsetX = 53;
@@ -34,6 +41,10 @@ public class Player extends Entity{
     private final float jumpSpeed = -3.5f;
     private final float maxFallSpeed = 10f;
     private boolean inAir = false;
+
+    // Player cooldowns
+    private long isDashingStartTime = 0;
+    private long dashCooldown = 10000; 
 
     // Level
     public Player(float x, float y, Level level){
@@ -90,6 +101,16 @@ public class Player extends Entity{
                 airSpeed = maxFallSpeed;
             }
             nextY += airSpeed;
+        }
+
+        // Dashing 
+        if(isDashing && (System.currentTimeMillis() - isDashingStartTime >= dashCooldown)) {
+            if(isFacingRight) {
+                nextX += playerSpeed * dashMultiplier; // Dash speed multiplier
+            } else {
+                nextX -= playerSpeed * dashMultiplier; // Dash speed multiplier
+            }
+            isDashingStartTime = System.currentTimeMillis();
         }
 
         // Check X movement separately
@@ -153,11 +174,9 @@ public class Player extends Entity{
         } else {
             playerAction = IDLE;
         }
-
-        if(attacking){
+        if(isDashing){
             playerAction = DASH_3;
         }
-        
         // Reset animation index when switching animations
         if (startAnim != playerAction) {
             animIndex = 0;
@@ -172,7 +191,8 @@ public class Player extends Entity{
             animIndex++;
             if(animIndex >= GetSpriteAmount(playerAction)){
                 animIndex = 0; 
-                attacking = false;
+                //reset dashing state after dash animation completes
+                isDashing = false;
             }
         } 
     }
@@ -202,7 +222,6 @@ public class Player extends Entity{
     }
 
     //  -- Boolean Reset --
-
     public void resetDirBooleans(){
         left = false;
         right = false;
@@ -218,10 +237,6 @@ public class Player extends Entity{
     
     public float getY() {
         return y;
-    }
-
-    public void setAttacking(boolean attacking){
-        this.attacking = attacking;
     }
 
     public boolean isLeft() {
@@ -254,5 +269,22 @@ public class Player extends Entity{
 
     public void setDown(boolean down) {
         this.down = down;
+    }
+
+    public boolean isDashing() {
+        return isDashing;
+    }
+
+    public void setDashing(boolean isDashing) {
+        if (isDashing) {
+            long now = System.currentTimeMillis();
+            if (!this.isDashing && (now - lastDashTime >= dashCooldown)) {
+                this.isDashing = true;
+                isDashingStartTime = now;
+                lastDashTime = now;
+            }
+        } else {
+            this.isDashing = false;
+        }
     }
 }
