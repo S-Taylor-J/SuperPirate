@@ -16,35 +16,37 @@ public class Player extends Entity{
     private int animTick, animIndex, animSpeed = 10;
     private int playerAction = IDLE;
     private boolean moving = false;
+    private int frameWidth = 64;
+    private final int frameHeight = 64;
 
     // Movement Booleans
     private boolean left, up, right, down;
     private boolean isFacingRight = true;
-    private boolean isDashing = false; 
-    private long lastDashTime = 0;
+
 
     // Player attributes
     private final int playerWidth = 136;
     private final int playerHeight = 93;
     private final float playerSpeed = 2.0f;
-    private final float dashMultiplier = 3.0f;
 
     // Player Hitbox 
     private final int hitboxOffsetX = 53;
     private final int hitboxOffsetY = 25;
     private final int hitBoxWidth = 30;
-    private final int hitBoxHeight = 40;
+    private final int hitBoxHeight = 60;
 
     // Gravity and jumping
     private float airSpeed = 0f;
     private final float gravity = 0.04f;
-    private final float jumpSpeed = -3.5f;
+    private final float jumpSpeed = -4f;
     private final float maxFallSpeed = 10f;
     private boolean inAir = false;
 
     // Player cooldowns
-    private long isDashingStartTime = 0;
-    private long dashCooldown = 10000; 
+    private boolean isAttacking = false;
+    private long isAttackingStartTime = 0;
+    private final long attackingCooldown = 1000; // 1 second cooldown
+    private long lastAttackingTime = 0;
 
     // Level
     public Player(float x, float y, Level level){
@@ -103,14 +105,14 @@ public class Player extends Entity{
             nextY += airSpeed;
         }
 
-        // Dashing 
-        if(isDashing && (System.currentTimeMillis() - isDashingStartTime >= dashCooldown)) {
+        // Attacking 
+        if(isAttacking && (System.currentTimeMillis() - isAttackingStartTime >= attackingCooldown)) {
             if(isFacingRight) {
-                nextX += playerSpeed * dashMultiplier; // Dash speed multiplier
+                // nextX += playerSpeed * dashMultiplier; // Dash speed multiplier
             } else {
-                nextX -= playerSpeed * dashMultiplier; // Dash speed multiplier
+                // nextX -= playerSpeed * dashMultiplier; // Dash speed multiplier
             }
-            isDashingStartTime = System.currentTimeMillis();
+            isAttackingStartTime = System.currentTimeMillis();
         }
 
         // Check X movement separately
@@ -166,16 +168,19 @@ public class Player extends Entity{
     // --   Animations    --
     private void setAnimation() {
         int startAnim = playerAction;
-        
-        if(inAir) {
-            playerAction = JUMPING;
-        } else if (moving){
+        if (inAir) {
+            if (airSpeed > 0) {
+                playerAction = FALLING;
+            } else {
+                playerAction = JUMPING;
+            }
+        } else if (moving) {
             playerAction = RUNNING;
         } else {
             playerAction = IDLE;
         }
-        if(isDashing){
-            playerAction = DASH_3;
+        if (isAttacking) {
+            playerAction = ATTACKING;
         }
         // Reset animation index when switching animations
         if (startAnim != playerAction) {
@@ -190,23 +195,35 @@ public class Player extends Entity{
             animTick = 0 ;
             animIndex++;
             if(animIndex >= GetSpriteAmount(playerAction)){
-                animIndex = 0; 
-                //reset dashing state after dash animation completes
-                isDashing = false;
+                animIndex = 0;
+                if (playerAction == ATTACKING) {
+                    isAttacking = false;
+                }
+                if (playerAction == FALLING) {
+                    animIndex = GetSpriteAmount(FALLING)- 1; // Stay on last frame of falling
+                }
             }
         } 
     }
 
     private void loadAnimations() {
-        animations = new BufferedImage[20][];
+        // animations = new BufferedImage[20][];
         
         // Load each animation from its own image file with its specific size
+        // animations[IDLE] = loadAnimationFromFile(LoadSave.PLAYER_IDLE, GetSpriteAmount(IDLE));
+        // animations[DASH_1] = loadAnimationFromFile(LoadSave.PLAYER_DASH_1, GetSpriteAmount(DASH_1));
+        // animations[DASH_2] = loadAnimationFromFile(LoadSave.PLAYER_DASH_2, GetSpriteAmount(DASH_2));
+        // animations[DASH_3] = loadAnimationFromFile(LoadSave.PLAYER_DASH_3, GetSpriteAmount(DASH_3));
+        // animations[JUMPING] = loadAnimationFromFile(LoadSave.PLAYER_JUMPING, GetSpriteAmount(JUMPING));
+        // animations[RUNNING] = loadAnimationFromFile(LoadSave.PLAYER_RUNNING, GetSpriteAmount(RUNNING));
+
+        animations = new BufferedImage[8][];
         animations[IDLE] = loadAnimationFromFile(LoadSave.PLAYER_IDLE, GetSpriteAmount(IDLE));
-        animations[DASH_1] = loadAnimationFromFile(LoadSave.PLAYER_DASH_1, GetSpriteAmount(DASH_1));
-        animations[DASH_2] = loadAnimationFromFile(LoadSave.PLAYER_DASH_2, GetSpriteAmount(DASH_2));
-        animations[DASH_3] = loadAnimationFromFile(LoadSave.PLAYER_DASH_3, GetSpriteAmount(DASH_3));
         animations[JUMPING] = loadAnimationFromFile(LoadSave.PLAYER_JUMPING, GetSpriteAmount(JUMPING));
+        animations[FALLING] = loadAnimationFromFile(LoadSave.PLAYER_FALLING, GetSpriteAmount(FALLING));
+        animations[ATTACKING] = loadAnimationFromFile(LoadSave.PLAYER_ATTACKING, GetSpriteAmount(ATTACKING));
         animations[RUNNING] = loadAnimationFromFile(LoadSave.PLAYER_RUNNING, GetSpriteAmount(RUNNING));
+
     }
     
     private BufferedImage[] loadAnimationFromFile(String path, int frameCount) {
@@ -215,7 +232,7 @@ public class Player extends Entity{
         
         for (int i = 0; i < frameCount; i++) {
             // 512
-            frames[i] = img.getSubimage(i * 512, 0, 512, 512);
+            frames[i] = img.getSubimage(i * frameWidth, 0, frameWidth, frameHeight);
         }
         
         return frames;
@@ -271,20 +288,20 @@ public class Player extends Entity{
         this.down = down;
     }
 
-    public boolean isDashing() {
-        return isDashing;
+    public boolean isAttacking() {
+        return isAttacking;
     }
 
-    public void setDashing(boolean isDashing) {
-        if (isDashing) {
+    public void setAttacking(boolean isAttacking) {
+        if (isAttacking) {
             long now = System.currentTimeMillis();
-            if (!this.isDashing && (now - lastDashTime >= dashCooldown)) {
-                this.isDashing = true;
-                isDashingStartTime = now;
-                lastDashTime = now;
+            if (!this.isAttacking && (now - lastAttackingTime >= attackingCooldown)) {
+                this.isAttacking = true;
+                isAttackingStartTime = now;
+                lastAttackingTime = now;
             }
         } else {
-            this.isDashing = false;
+            this.isAttacking = false;
         }
     }
 }
