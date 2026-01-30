@@ -9,20 +9,22 @@
     ],
     "fileStates": {
         "Level1.tmx": {
-            "scale": 0.0349,
+            "scale": 0.015625,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 43510.02865329513,
-                "y": 18925.501432664758
+                "x": 24992,
+                "y": 13952
             }
         },
         "Moss.tsx": {
-            "scaleInDock": 0.0796,
+            "scaleInDock": 0.0625,
             "scaleInEditor": 0.15
         }
     },
+    "last.exportedFilePath": "C:/Users/Taylor/OneDrive/Desktop",
     "last.imagePath": "/Users/taylorsantos/Desktop/Obliti/res/Tilesets",
     "map.height": 40,
+    "map.lastUsedExportFilter": "JavaScript map files (*.js)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 512,
     "map.tileWidth": 512,
