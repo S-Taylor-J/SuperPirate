@@ -1,0 +1,44 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Level1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Level1.tmx": {
+            "scale": 0.0349,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 43510.02865329513,
+                "y": 18925.501432664758
+            }
+        },
+        "Moss.tsx": {
+            "scaleInDock": 0.0796,
+            "scaleInEditor": 0.15
+        }
+    },
+    "last.imagePath": "/Users/taylorsantos/Desktop/Obliti/res/Tilesets",
+    "map.height": 40,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 512,
+    "map.tileWidth": 512,
+    "map.width": 100,
+    "openFiles": [
+        "Level1.tmx",
+        "Moss.tsx"
+    ],
+    "project": "Level1.tiled-project",
+    "recentFiles": [
+        "Moss.tsx",
+        "Level1.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 512,
+        "width": 512
+    }
+}
