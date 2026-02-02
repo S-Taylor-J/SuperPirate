@@ -1,6 +1,7 @@
 package main;
 
 import entities.Player;
+import entities.enemy;
 import java.awt.Graphics;
 import levels.LevelHandler;
 import utilz.Camera;
@@ -20,8 +21,8 @@ public class Game implements Runnable{
     public final static float TILES_SIZE = (int)(TILES_DEFAULT_SIZE * SCALE);
 
     // Map dimensions in tiles (the FULL map - larger than screen)
-    public final static int MAP_TILES_WIDTH = 100;
-    public final static int MAP_TILES_HEIGHT = 40;
+    public final static int MAP_TILES_WIDTH = 20;
+    public final static int MAP_TILES_HEIGHT = 3;
 
     // Viewport dimensions in tiles (what's VISIBLE on screen - smaller than map)
     public final static int VIEWPORT_TILES_WIDTH = 15;   
@@ -32,6 +33,7 @@ public class Game implements Runnable{
     public static int SCREEN_HEIGHT = (int)(TILES_SIZE * VIEWPORT_TILES_HEIGHT);
 
     private Player player;
+    private enemy enemy;
     
     public Game() {
         initClasses();
@@ -44,6 +46,7 @@ public class Game implements Runnable{
     private void initClasses() {
         levelHandler = new LevelHandler(this);
         player = new Player(50, 50, levelHandler.getLevel());
+        enemy = new enemy(100, 510, levelHandler.getLevel());
         // Pass FULL MAP dimensions to camera
         camera = new Camera(MAP_TILES_WIDTH, MAP_TILES_HEIGHT);
     }
@@ -55,6 +58,13 @@ public class Game implements Runnable{
 
     public void update() {
         player.update();
+        enemy.update();
+        
+        // Check if player attack hits enemy
+        if (player.isAttacking()) {
+            player.checkAttack(enemy);
+        }
+        
         camera.update(player);
         levelHandler.update();
     }
@@ -62,6 +72,7 @@ public class Game implements Runnable{
     public void render(Graphics g){
         levelHandler.draw(g, camera);
         player.render(g, camera);
+        enemy.render(g);
     }
     
     public Camera getCamera() {

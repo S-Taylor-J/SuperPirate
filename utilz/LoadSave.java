@@ -8,20 +8,17 @@ import javax.imageio.ImageIO;
 public class LoadSave {
 
     //Player Sprites
-    // public static final String PLAYER_IDLE = "/res/char/idle.png";
-    // public static final String PLAYER_DASH_1 = "/res/char/dash_1.png";
-    // public static final String PLAYER_DASH_2 = "/res/char/dash_2.png";
-    // public static final String PLAYER_DASH_3 = "/res/char/dash_3.png";
-    // public static final String PLAYER_JUMPING = "/res/char/jump.png";
-    // public static final String PLAYER_RUNNING = "/res/char/walk.png";
+    public static final String PLAYER_IDLE = "/res/pirate/idle.png";
+    public static final String PLAYER_ATTACKING = "/res/pirate/attack_1.png";
+    public static final String PLAYER_JUMPING = "/res/pirate/jump.png";
+    public static final String PLAYER_RUNNING = "/res/pirate/run.png";
+    public static final String PLAYER_FALLING = "/res/pirate/fall.png";
+    
+    //Enemy (Pink Fish) sprites
+    public static final String ENEMY_PK_IDLE = "/res/enemies/PinkFish/idle.png";
 
-    public static final String PLAYER_IDLE = "/res/char1/idle.png";
-    public static final String PLAYER_ATTACKING = "/res/char1/attack_1.png";
-    public static final String PLAYER_JUMPING = "/res/char1/jump.png";
-    public static final String PLAYER_RUNNING = "/res/char1/run.png";
-    public static final String PLAYER_FALLING = "/res/char1/fall.png";
     //Tilesets
-    public static final String MOSS_TILESET = "/res/Tilesets/moss.png";
+    public static final String TERRAIN_TILESET = "/res/Tilesets/Terrain.png";
 
     public static BufferedImage getSpriteAtlas(String fileName) {
         BufferedImage img = null;

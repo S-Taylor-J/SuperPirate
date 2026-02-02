@@ -13,11 +13,11 @@ import utilz.LoadSave;
 public class Player extends Entity{
     // Animations
     private BufferedImage[][] animations;
-    private int animTick, animIndex, animSpeed = 10;
+    private int animTick, animIndex, animSpeed = 15;
     private int playerAction = IDLE;
     private boolean moving = false;
     private int frameWidth = 64;
-    private final int frameHeight = 64;
+    private final int frameHeight = 40;
 
     // Movement Booleans
     private boolean left, up, right, down;
@@ -25,15 +25,15 @@ public class Player extends Entity{
 
 
     // Player attributes
-    private final int playerWidth = 136;
-    private final int playerHeight = 93;
+    private final int playerWidth = 128;
+    private final int playerHeight = 80;
     private final float playerSpeed = 2.0f;
 
     // Player Hitbox 
-    private final int hitboxOffsetX = 53;
+    private final int hitboxOffsetX = 50;
     private final int hitboxOffsetY = 25;
     private final int hitBoxWidth = 30;
-    private final int hitBoxHeight = 60;
+    private final int hitBoxHeight = 40;
 
     // Gravity and jumping
     private float airSpeed = 0f;
@@ -45,8 +45,9 @@ public class Player extends Entity{
     // Player cooldowns
     private boolean isAttacking = false;
     private long isAttackingStartTime = 0;
-    private final long attackingCooldown = 1000; // 1 second cooldown
+    private final long attackingCooldown = 1000;
     private long lastAttackingTime = 0;
+    private boolean attackChecked = false; // Prevents multiple hits per attack
 
     // Level
     public Player(float x, float y, Level level){
@@ -72,6 +73,14 @@ public class Player extends Entity{
         // draw hitbox 
         g.setColor(Color.RED);
         g.drawRect((int)(x + hitboxOffsetX - camera.getXOffset()), (int)(y + hitboxOffsetY - camera.getYOffset()),hitBoxWidth, hitBoxHeight);
+
+        // Draw attack range (solid blue, not translucent)
+        g.setColor(Color.BLUE);
+        float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f - camera.getXOffset();
+        float playerCenterY = y + hitboxOffsetY + hitBoxHeight / 2f - camera.getYOffset();
+        int rangeX = (int) (isFacingRight ? playerCenterX : playerCenterX - attackRange);
+        int rangeWidth = attackRange;
+        g.fillOval(rangeX, (int)(playerCenterY - 20), rangeWidth, 40);
     }
     
     //  -- Player Movement --
@@ -108,9 +117,9 @@ public class Player extends Entity{
         // Attacking 
         if(isAttacking && (System.currentTimeMillis() - isAttackingStartTime >= attackingCooldown)) {
             if(isFacingRight) {
-                // nextX += playerSpeed * dashMultiplier; // Dash speed multiplier
+
             } else {
-                // nextX -= playerSpeed * dashMultiplier; // Dash speed multiplier
+
             }
             isAttackingStartTime = System.currentTimeMillis();
         }
@@ -180,7 +189,7 @@ public class Player extends Entity{
             playerAction = IDLE;
         }
         if (isAttacking) {
-            playerAction = ATTACKING;
+            playerAction = ATTACK_1;
         }
         // Reset animation index when switching animations
         if (startAnim != playerAction) {
@@ -196,8 +205,9 @@ public class Player extends Entity{
             animIndex++;
             if(animIndex >= GetSpriteAmount(playerAction)){
                 animIndex = 0;
-                if (playerAction == ATTACKING) {
+                if (playerAction == ATTACK_1) {
                     isAttacking = false;
+                    attackChecked = false; // Reset for next attack
                 }
                 if (playerAction == FALLING) {
                     animIndex = GetSpriteAmount(FALLING)- 1; // Stay on last frame of falling
@@ -207,21 +217,11 @@ public class Player extends Entity{
     }
 
     private void loadAnimations() {
-        // animations = new BufferedImage[20][];
-        
-        // Load each animation from its own image file with its specific size
-        // animations[IDLE] = loadAnimationFromFile(LoadSave.PLAYER_IDLE, GetSpriteAmount(IDLE));
-        // animations[DASH_1] = loadAnimationFromFile(LoadSave.PLAYER_DASH_1, GetSpriteAmount(DASH_1));
-        // animations[DASH_2] = loadAnimationFromFile(LoadSave.PLAYER_DASH_2, GetSpriteAmount(DASH_2));
-        // animations[DASH_3] = loadAnimationFromFile(LoadSave.PLAYER_DASH_3, GetSpriteAmount(DASH_3));
-        // animations[JUMPING] = loadAnimationFromFile(LoadSave.PLAYER_JUMPING, GetSpriteAmount(JUMPING));
-        // animations[RUNNING] = loadAnimationFromFile(LoadSave.PLAYER_RUNNING, GetSpriteAmount(RUNNING));
-
-        animations = new BufferedImage[8][];
+        animations = new BufferedImage[6][];
         animations[IDLE] = loadAnimationFromFile(LoadSave.PLAYER_IDLE, GetSpriteAmount(IDLE));
         animations[JUMPING] = loadAnimationFromFile(LoadSave.PLAYER_JUMPING, GetSpriteAmount(JUMPING));
         animations[FALLING] = loadAnimationFromFile(LoadSave.PLAYER_FALLING, GetSpriteAmount(FALLING));
-        animations[ATTACKING] = loadAnimationFromFile(LoadSave.PLAYER_ATTACKING, GetSpriteAmount(ATTACKING));
+        animations[ATTACK_1] = loadAnimationFromFile(LoadSave.PLAYER_ATTACKING, GetSpriteAmount(ATTACK_1));
         animations[RUNNING] = loadAnimationFromFile(LoadSave.PLAYER_RUNNING, GetSpriteAmount(RUNNING));
 
     }
@@ -302,6 +302,41 @@ public class Player extends Entity{
             }
         } else {
             this.isAttacking = false;
+        }
+    }
+
+    // Attack range check
+    private final int attackRange = 100;
+
+    public boolean isEnemyInRange(enemy e) {
+        // Get player's attack hitbox center
+        float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f;
+        float playerCenterY = y + hitboxOffsetY + hitBoxHeight / 2f;
+
+        // Get enemy's hitbox center
+        float enemyCenterX = e.getX() + e.getHitboxOffsetX() + e.getHitBoxWidth() / 2f;
+        float enemyCenterY = e.getY() + e.getHitboxOffsetY() + e.getHitBoxHeight() / 2f;
+
+        // Check direction - only hit enemies in front of player
+        if (isFacingRight && enemyCenterX < playerCenterX) {
+            return false;
+        }
+        if (!isFacingRight && enemyCenterX > playerCenterX) {
+            return false;
+        }
+
+        // Calculate distance
+        float dx = playerCenterX - enemyCenterX;
+        float dy = playerCenterY - enemyCenterY;
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+        return distance <= attackRange;
+    }
+
+    public void checkAttack(enemy e) {
+        if (isAttacking && !attackChecked && isEnemyInRange(e)) {
+            e.takeDamage(1);
+            attackChecked = true; // Only hit once per attack
         }
     }
 }
