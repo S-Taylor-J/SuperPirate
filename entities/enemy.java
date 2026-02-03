@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import levels.Level;
+import utilz.Camera;
 import utilz.HelpMethod;
 import utilz.LoadSave;
 
@@ -51,9 +52,9 @@ public class enemy extends Entity {
         setAnimation();
     }
 
-    public void render(Graphics g) {
-        int drawX = (int) x;
-        int drawY = (int) y;
+    public void render(Graphics g, Camera camera) {
+        int drawX = (int) (x - camera.getXOffset());
+        int drawY = (int) (y - camera.getYOffset());
 
         if (isFacingRight) {
             g.drawImage(animations[enemyAction][animIndex], drawX, drawY, enemyWidth, enemyHeight, null);
@@ -64,7 +65,7 @@ public class enemy extends Entity {
 
         // Draw hitbox (for debugging)
         g.setColor(Color.GREEN);
-        g.drawRect((int) (x + hitboxOffsetX), (int) (y + hitboxOffsetY), hitBoxWidth, hitBoxHeight);
+        g.drawRect((int) (x + hitboxOffsetX - camera.getXOffset()), (int) (y + hitboxOffsetY - camera.getYOffset()), hitBoxWidth, hitBoxHeight);
     }
 
     private void updatePos() {

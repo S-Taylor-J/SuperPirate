@@ -46,7 +46,7 @@ public class Game implements Runnable{
     private void initClasses() {
         levelHandler = new LevelHandler(this);
         player = new Player(50, 50, levelHandler.getLevel());
-        enemy = new enemy(100, 510, levelHandler.getLevel());
+        enemy = new enemy(50, 50, levelHandler.getLevel());
         // Pass FULL MAP dimensions to camera
         camera = new Camera(MAP_TILES_WIDTH, MAP_TILES_HEIGHT);
     }
@@ -72,7 +72,7 @@ public class Game implements Runnable{
     public void render(Graphics g){
         levelHandler.draw(g, camera);
         player.render(g, camera);
-        enemy.render(g);
+        enemy.render(g, camera);
     }
     
     public Camera getCamera() {
