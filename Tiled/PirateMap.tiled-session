@@ -1,0 +1,20 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+    },
+    "last.imagePath": "C:/Users/Taylor/Downloads/Treasure Hunters/Treasure Hunters/Pirate Ship/Sprites/Tilesets",
+    "map.lastUsedFormat": "js",
+    "map.width": 100,
+    "openFiles": [
+    ],
+    "project": "PirateMap.tiled-project",
+    "recentFiles": [
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

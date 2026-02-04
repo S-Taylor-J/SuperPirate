@@ -21,12 +21,7 @@ public class LevelHandler {
     private void createLevel() {
         // Define your level directly as a 2D array
         // -1 = empty, 0-48 = tile indices from tileset
-        int[][] levelData ={
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-            {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-
-};
+        int[][] levelData = levels.level0;
         level = new Level(levelData);
     }
 

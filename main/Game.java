@@ -21,8 +21,8 @@ public class Game implements Runnable{
     public final static float TILES_SIZE = (int)(TILES_DEFAULT_SIZE * SCALE);
 
     // Map dimensions in tiles (the FULL map - larger than screen)
-    public final static int MAP_TILES_WIDTH = 20;
-    public final static int MAP_TILES_HEIGHT = 3;
+    public final static int MAP_TILES_WIDTH = 100;
+    public final static int MAP_TILES_HEIGHT = 20;
 
     // Viewport dimensions in tiles (what's VISIBLE on screen - smaller than map)
     public final static int VIEWPORT_TILES_WIDTH = 15;   
