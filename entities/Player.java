@@ -2,6 +2,7 @@ package entities;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import levels.Level;
 import utilz.Camera;
@@ -38,7 +39,7 @@ public class Player extends Entity{
     // Gravity and jumping
     private float airSpeed = 0f;
     private final float gravity = 0.04f;
-    private final float jumpSpeed = -4f;
+    private final float jumpSpeed = -5f;
     private final float maxFallSpeed = 10f;
     private boolean inAir = false;
 
@@ -49,16 +50,40 @@ public class Player extends Entity{
     private long lastAttackingTime = 0;
     private boolean attackChecked = false; // Prevents multiple hits per attack
 
-    // Level
-    public Player(float x, float y, Level level){
+    // Attack range check
+    private final int attackRange = 100;
+
+    // Reference to enemy manager for attack checks
+    private EnemyManager enemyManager;
+
+    public Player(float x, float y, Level level) {
         super(x, y, level);
         loadAnimations();
     }
 
-    public void update(){
+    /**
+     * Set the enemy manager reference for attack checks
+     */
+    public void setEnemyManager(EnemyManager enemyManager) {
+        this.enemyManager = enemyManager;
+    }
+
+    public void update() {
         updatePos();
+        checkAttacks();
         updateAnimationTick();
         setAnimation();
+    }
+
+    /**
+     * Check if player attack hits any enemy
+     */
+    private void checkAttacks() {
+        if (isAttacking && enemyManager != null) {
+            for (Enemy enemy : enemyManager.getAliveEnemies()) {
+                checkAttack(enemy);
+            }
+        }
     }
     
     public void render(Graphics g, Camera camera){
@@ -305,10 +330,7 @@ public class Player extends Entity{
         }
     }
 
-    // Attack range check
-    private final int attackRange = 100;
-
-    public boolean isEnemyInRange(enemy e) {
+    public boolean isEnemyInRange(Enemy e) {
         // Get player's attack hitbox center
         float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f;
         float playerCenterY = y + hitboxOffsetY + hitBoxHeight / 2f;
@@ -333,10 +355,25 @@ public class Player extends Entity{
         return distance <= attackRange;
     }
 
-    public void checkAttack(enemy e) {
+    private void checkAttack(Enemy e) {
         if (isAttacking && !attackChecked && isEnemyInRange(e)) {
             e.takeDamage(1);
             attackChecked = true; // Only hit once per attack
         }
+    }
+
+    /**
+     * Get player's hitbox as a Rectangle (for collision checks)
+     */
+    public Rectangle getHitbox() {
+        return new Rectangle((int) (x + hitboxOffsetX), (int) (y + hitboxOffsetY), hitBoxWidth, hitBoxHeight);
+    }
+
+    /**
+     * Player takes damage from an enemy attack
+     */
+    public void takeDamage(int damage) {
+        // TODO: Implement player health system
+        System.out.println("Player hit! Damage: " + damage);
     }
 }

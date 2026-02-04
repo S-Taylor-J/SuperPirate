@@ -16,6 +16,8 @@ public class LoadSave {
     
     //Enemy (Pink Fish) sprites
     public static final String ENEMY_PK_IDLE = "/res/enemies/PinkFish/idle.png";
+    public static final String ENEMY_PK_ATTACK = "/res/enemies/PinkFish/attack.png";
+
 
     //Tilesets
     public static final String TERRAIN_TILESET = "/res/Tilesets/Terrain.png";

@@ -1,7 +1,7 @@
 package main;
 
+import entities.EnemyManager;
 import entities.Player;
-import entities.enemy;
 import java.awt.Graphics;
 import levels.LevelHandler;
 import utilz.Camera;
@@ -33,7 +33,7 @@ public class Game implements Runnable{
     public static int SCREEN_HEIGHT = (int)(TILES_SIZE * VIEWPORT_TILES_HEIGHT);
 
     private Player player;
-    private enemy enemy;
+    private EnemyManager enemyManager;
     
     public Game() {
         initClasses();
@@ -46,7 +46,19 @@ public class Game implements Runnable{
     private void initClasses() {
         levelHandler = new LevelHandler(this);
         player = new Player(50, 50, levelHandler.getLevel());
-        enemy = new enemy(50, 50, levelHandler.getLevel());
+        
+        // Initialize enemy manager and spawn enemies
+        enemyManager = new EnemyManager(levelHandler.getLevel());
+        
+        // Connect player and enemy manager (bidirectional)
+        player.setEnemyManager(enemyManager);
+        enemyManager.setPlayer(player);
+        
+        // Spawn enemies
+        enemyManager.spawnPinkFish(200, 50);
+        enemyManager.spawnPinkFish(400, 50);
+        enemyManager.spawnPinkFish(600, 50);
+        
         // Pass FULL MAP dimensions to camera
         camera = new Camera(MAP_TILES_WIDTH, MAP_TILES_HEIGHT);
     }
@@ -58,13 +70,7 @@ public class Game implements Runnable{
 
     public void update() {
         player.update();
-        enemy.update();
-        
-        // Check if player attack hits enemy
-        if (player.isAttacking()) {
-            player.checkAttack(enemy);
-        }
-        
+        enemyManager.update();
         camera.update(player);
         levelHandler.update();
     }
@@ -72,7 +78,7 @@ public class Game implements Runnable{
     public void render(Graphics g){
         levelHandler.draw(g, camera);
         player.render(g, camera);
-        enemy.render(g, camera);
+        enemyManager.render(g, camera);
     }
     
     public Camera getCamera() {
