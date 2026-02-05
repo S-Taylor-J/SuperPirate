@@ -4,6 +4,7 @@ import entities.EnemyManager;
 import entities.Player;
 import java.awt.Graphics;
 import levels.LevelHandler;
+import ui.UIManager;
 import utilz.Camera;
 
 public class Game implements Runnable{
@@ -34,6 +35,7 @@ public class Game implements Runnable{
 
     private Player player;
     private EnemyManager enemyManager;
+    private UIManager uiManager;
     
     public Game() {
         initClasses();
@@ -46,7 +48,7 @@ public class Game implements Runnable{
     private void initClasses() {
         levelHandler = new LevelHandler(this);
         player = new Player(50, 50, levelHandler.getLevel());
-        
+        uiManager = new UIManager();
         // Initialize enemy manager and spawn enemies
         enemyManager = new EnemyManager(levelHandler.getLevel());
         
@@ -73,12 +75,14 @@ public class Game implements Runnable{
         enemyManager.update();
         camera.update(player);
         levelHandler.update();
+        uiManager.update();
     }
 
     public void render(Graphics g){
         levelHandler.draw(g, camera);
         player.render(g, camera);
         enemyManager.render(g, camera);
+        uiManager.render(g, 5, 10, 100);
     }
     
     public Camera getCamera() {

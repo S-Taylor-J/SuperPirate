@@ -24,7 +24,6 @@ public class Player extends Entity{
     private boolean left, up, right, down;
     private boolean isFacingRight = true;
 
-
     // Player attributes
     private final int playerWidth = 128;
     private final int playerHeight = 80;
@@ -61,9 +60,6 @@ public class Player extends Entity{
         loadAnimations();
     }
 
-    /**
-     * Set the enemy manager reference for attack checks
-     */
     public void setEnemyManager(EnemyManager enemyManager) {
         this.enemyManager = enemyManager;
     }
@@ -75,9 +71,6 @@ public class Player extends Entity{
         setAnimation();
     }
 
-    /**
-     * Check if player attack hits any enemy
-     */
     private void checkAttacks() {
         if (isAttacking && enemyManager != null) {
             for (Enemy enemy : enemyManager.getAliveEnemies()) {
@@ -92,9 +85,9 @@ public class Player extends Entity{
         if (isFacingRight) {
             g.drawImage(animations[playerAction][animIndex], drawX, drawY, playerWidth, playerHeight, null);
         } else {
-            // Flip horizontally by drawing with negative width, adjust x
             g.drawImage(animations[playerAction][animIndex], drawX + playerWidth, drawY, -playerWidth, playerHeight, null);
         }
+
         // draw hitbox 
         g.setColor(Color.RED);
         g.drawRect((int)(x + hitboxOffsetX - camera.getXOffset()), (int)(y + hitboxOffsetY - camera.getYOffset()),hitBoxWidth, hitBoxHeight);
@@ -272,7 +265,6 @@ public class Player extends Entity{
     }
 
     // -- Getters & Setters -- 
-
     public float getX() {
         return x;
     }
