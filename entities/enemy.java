@@ -111,6 +111,11 @@ public abstract class Enemy extends Entity {
         return new Rectangle(attackX, attackY, attackRange, hitBoxHeight);
     }
 
+    protected Rectangle healthBar() {
+        int barWidth = (int) ((health / (float) maxHealth) * enemyWidth);
+        return new Rectangle((int) (x - hitboxOffsetX), (int) (y - hitboxOffsetY - 10), barWidth, 5);
+    }
+
     protected void attack() {
         // Default attack behavior - can be overridden by subclasses
         // For example, you could set enemyAction to an attack animation and reset animIndex
@@ -192,10 +197,21 @@ public abstract class Enemy extends Entity {
                 g.drawImage(animations[enemyAction][animIndex], drawX + enemyWidth, drawY, -enemyWidth, enemyHeight, null);
             }
         }
+        // Draw health bar
+        drawHealthBar(g, camera);
 
         // Draw hitbox (for debugging)
         g.setColor(Color.GREEN);
         g.drawRect((int) (x + hitboxOffsetX - camera.getXOffset()), (int) (y + hitboxOffsetY - camera.getYOffset()), hitBoxWidth, hitBoxHeight);
+    }
+    
+    private void drawHealthBar(Graphics g, Camera camera){
+        g.setColor(Color.RED);
+        Rectangle healthBar = healthBar();
+        g.fillRect((int)(healthBar.x - camera.getXOffset()), (int)(healthBar.y - camera.getYOffset()), healthBar.width, healthBar.height);
+        g.setColor(Color.BLACK);
+        g.drawRect((int)(healthBar.x - camera.getXOffset()), (int)(healthBar.y - camera.getYOffset()), (int) ((health / (float) maxHealth) * enemyWidth), 5);
+        
     }
 
     protected void setAnimation() {
