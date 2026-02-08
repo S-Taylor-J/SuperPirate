@@ -2,6 +2,7 @@ package entities;
 
 import java.awt.image.BufferedImage;
 import levels.Level;
+import static utilz.EnemyConstants.PinkFishEnemyConstants.*;
 import utilz.LoadSave;
 
 /**
@@ -9,8 +10,11 @@ import utilz.LoadSave;
  * Customize attributes and animations for this specific enemy type.
  */
 public class PinkFishEnemy extends Enemy {
-
     private long lastAttackingTime = 0;
+    private final long attackCoolDown = 5000;
+    private long attackAnimationStartTime = 0;
+    private final long attackAnimationDuration = 1000; 
+    private final int attackRange = 50;
 
     public PinkFishEnemy(float x, float y, Level level) {
         super(x, y, level);
@@ -43,16 +47,15 @@ public class PinkFishEnemy extends Enemy {
         this.hitBoxWidth = 50;
         this.hitBoxHeight = 50;
 
-        // Animation frame counts: [idle, walk, attack, etc.]
-        this.animationFrameCounts = new int[]{6, 6}; // 6 frames for idle and attack
+        this.animationFrameCounts = new int[]{6, 4}; 
     }
 
     @Override
     protected void loadAnimations() {
         animations = new BufferedImage[getAnimationCount()][];
         // Idle animation
-        animations[0] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 6);
-        animations[1] = loadAnimationFromFile(LoadSave.ENEMY_PK_ATTACK, 4);
+        animations[IDLE] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 6);
+        animations[ATTACK] = loadAnimationFromFile(LoadSave.ENEMY_PK_ATTACK, 4);
     }
 
     @Override
@@ -62,28 +65,50 @@ public class PinkFishEnemy extends Enemy {
 
     @Override
     protected void attack() {
-        // attack every 2 seconds move the fish left to right 
-        // move the fish left to right and check if player is in range to attack
         if (player != null) {
             long currentTime = System.currentTimeMillis();
-            if (currentTime - lastAttackingTime >= 2000) { // Attack every 2 seconds
+            long cooldownTime = currentTime - lastAttackingTime;
+
+            if (!attacking && cooldownTime >= attackCoolDown) {
+                attacking = true;
+                enemyAction = ATTACK;
+                attackAnimationStartTime = currentTime;
+
                 // Check if player is within attack range
                 float distanceToPlayer = Math.abs((x + enemyWidth / 2) - (player.getX() + player.getWidth() / 2));
                 if (distanceToPlayer <= attackRange) {
                     player.takeDamage(attackDamage);
                 }
                 lastAttackingTime = currentTime;
+                
             }
+            if (attacking && (currentTime - attackAnimationStartTime >= attackAnimationDuration)) {
+                attacking = false;
+                enemyAction = IDLE;
+            }   
+    
         }
+        attackMovement();
     }
 
     // Override setAnimation() if you want custom behavior
-    // @Override
-    // protected void setAnimation() {
-    //     if (moving) {
-    //         enemyAction = 1; // walk
-    //     } else {
-    //         enemyAction = 0; // idle
-    //     }
-    // }
+    @Override
+    protected void setAnimation() {
+        if (attacking) {
+            enemyAction = ATTACK;
+        } else {
+            enemyAction = IDLE;
+        }
+    }
+
+    private void attackMovement(){
+        // Move left or right unless collides with blocks
+        if (attacking){
+            if (x < player.getX()) {
+                x += enemySpeed; // Move right
+            } else if (x > player.getX()) {
+                x -= enemySpeed; // Move left
+            }
+        }
+    }
 }

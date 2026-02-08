@@ -48,7 +48,7 @@ public class Game implements Runnable{
     private void initClasses() {
         levelHandler = new LevelHandler(this);
         player = new Player(50, 50, levelHandler.getLevel());
-        uiManager = new UIManager();
+        uiManager = new UIManager(player);
         // Initialize enemy manager and spawn enemies
         enemyManager = new EnemyManager(levelHandler.getLevel());
         

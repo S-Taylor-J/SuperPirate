@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import levels.Level;
 import utilz.Camera;
+import static utilz.EnemyConstants.PinkFishEnemyConstants.*;
 import utilz.HelpMethod;
 import utilz.LoadSave;
 
@@ -18,8 +19,9 @@ public abstract class Enemy extends Entity {
     protected BufferedImage[][] animations;
     protected int animTick, animIndex;
     protected int animSpeed = 15;
-    protected int enemyAction = 0; // 0 = idle
+    protected int enemyAction = IDLE; // 0 = idle
     protected boolean moving = false;
+    protected boolean attacking = false;
 
     // Frame dimensions - override in subclass if different
     protected int frameWidth = 34;
@@ -83,8 +85,8 @@ public abstract class Enemy extends Entity {
     public void update() {
         updatePos();
         updateAnimationTick();
-        setAnimation();
         attack();
+        setAnimation();
     }
 
     /**
@@ -213,7 +215,7 @@ public abstract class Enemy extends Entity {
 
     protected void setAnimation() {
         // Default: idle animation. Override in subclass for more complex behavior.
-        enemyAction = 0;
+        enemyAction = IDLE;
     }
 
     protected void updateAnimationTick() {

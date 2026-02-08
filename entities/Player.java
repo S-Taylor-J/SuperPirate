@@ -17,7 +17,9 @@ public class Player extends Entity{
     private int animTick, animIndex, animSpeed = 15;
     private int playerAction = IDLE;
     private boolean moving = false;
-    private int frameWidth = 64;
+
+    // Frame dimensions for sprite sheet
+    private final int frameWidth = 64;
     private final int frameHeight = 40;
 
     // Movement Booleans
@@ -47,20 +49,19 @@ public class Player extends Entity{
     private long isAttackingStartTime = 0;
     private final long attackingCooldown = 1000;
     private long lastAttackingTime = 0;
-    private boolean attackChecked = false; // Prevents multiple hits per attack
+    private boolean attackChecked = false;
+    private final long invulnerabilityDuration = 1000;
+    private long lastDamageTime = 0;
 
     //Player data
     private int health = 5;
     private boolean alive = true;
-
-     // Reference to enemy manager for attack checks
+    private boolean invulnerable = false;
 
     // Attack range check
     private final int attackRange = 100;
 
-    // Reference to enemy manager for attack checks
     private EnemyManager enemyManager;
-
     public Player(float x, float y, Level level) {
         super(x, y, level);
         loadAnimations();
@@ -71,20 +72,18 @@ public class Player extends Entity{
     }
 
     public void update() {
+        if (!alive) {
+            System.out.println("Player is dead. No update.");
+            return; // Skip update if player is dead
+        }
         updatePos();
         checkAttacks();
         updateAnimationTick();
         setAnimation();
+        checkEnemyCollisions();
+        checkIfAlive();
     }
 
-    private void checkAttacks() {
-        if (isAttacking && enemyManager != null) {
-            for (Enemy enemy : enemyManager.getAliveEnemies()) {
-                checkAttack(enemy);
-            }
-        }
-    }
-    
     public void render(Graphics g, Camera camera){
         int drawX = (int)(x - camera.getXOffset());
         int drawY = (int)(y - camera.getYOffset());
@@ -105,6 +104,15 @@ public class Player extends Entity{
         int rangeX = (int) (isFacingRight ? playerCenterX : playerCenterX - attackRange);
         int rangeWidth = attackRange;
         g.fillOval(rangeX, (int)(playerCenterY - 20), rangeWidth, 40);
+    }
+
+    // -- Attacking --
+    private void checkAttacks() {
+        if (isAttacking && enemyManager != null) {
+            for (Enemy enemy : enemyManager.getAliveEnemies()) {
+                checkAttack(enemy);
+            }
+        }
     }
     
     //  -- Player Movement --
@@ -236,6 +244,9 @@ public class Player extends Entity{
                 if (playerAction == FALLING) {
                     animIndex = GetSpriteAmount(FALLING)- 1; // Stay on last frame of falling
                 }
+                if (playerAction == JUMPING) {
+                    animIndex = GetSpriteAmount(JUMPING) - 1; // Stay on last frame of jumping
+                }
             }
         } 
     }
@@ -315,19 +326,15 @@ public class Player extends Entity{
         return isAttacking;
     }
 
-    public void setAttacking(boolean isAttacking) {
-        if (isAttacking) {
-            long now = System.currentTimeMillis();
-            if (!this.isAttacking && (now - lastAttackingTime >= attackingCooldown)) {
-                this.isAttacking = true;
-                isAttackingStartTime = now;
-                lastAttackingTime = now;
-            }
-        } else {
-            this.isAttacking = false;
-        }
+    public int getHealth() {
+        return health;
     }
 
+    public int getWidth() {
+        return playerWidth;
+    }
+
+    // -- Attacking --
     public boolean isEnemyInRange(Enemy e) {
         // Get player's attack hitbox center
         float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f;
@@ -352,34 +359,60 @@ public class Player extends Entity{
 
         return distance <= attackRange;
     }
+    
+    public void setAttacking(boolean isAttacking) {
+        if (isAttacking) {
+            long now = System.currentTimeMillis();
+            if (!this.isAttacking && (now - lastAttackingTime >= attackingCooldown)) {
+                this.isAttacking = true;
+                isAttackingStartTime = now;
+                lastAttackingTime = now;
+            }
+        } else {
+            this.isAttacking = false;
+        }
+    }
 
     private void checkAttack(Enemy e) {
         if (isAttacking && !attackChecked && isEnemyInRange(e)) {
             e.takeDamage(1);
-            attackChecked = true; // Only hit once per attack
+            attackChecked = true;
         }
     }
 
-    /**
-     * Get player's hitbox as a Rectangle (for collision checks)
-     */
+    private void checkEnemyCollisions() {
+        if (enemyManager != null) {
+            for (Enemy enemy : enemyManager.getAliveEnemies()) {
+                if (getHitbox().intersects(enemy.getHitbox())) {
+                    takeDamage(1);
+                    break; // Only take damage from one enemy per update
+                }
+            }
+        }
+    }
+
+    public void checkIfAlive() {
+        if (health <= 0) {
+            alive = false;
+        }
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    
     public Rectangle getHitbox() {
         return new Rectangle((int) (x + hitboxOffsetX), (int) (y + hitboxOffsetY), hitBoxWidth, hitBoxHeight);
     }
 
-    /**
-     * Player takes damage from an enemy attack
-     */
     public void takeDamage(int damage) {
-        // TODO: Implement player health system
-        System.out.println("Player hit! Damage: " + damage);
+        long now = System.currentTimeMillis();
+        if (!invulnerable || (now - lastDamageTime >= invulnerabilityDuration)) {
+            health -= damage;
+            invulnerable = true;
+            lastDamageTime = now;
+        }
     }
 
-    public int getHealth() {
-        return health;
-    }
-
-    public int getWidth() {
-        return playerWidth;
-    }
 }
