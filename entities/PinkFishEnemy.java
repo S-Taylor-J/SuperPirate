@@ -10,6 +10,8 @@ import utilz.LoadSave;
  */
 public class PinkFishEnemy extends Enemy {
 
+    private long lastAttackingTime = 0;
+
     public PinkFishEnemy(float x, float y, Level level) {
         super(x, y, level);
         initAttributes();
@@ -60,16 +62,17 @@ public class PinkFishEnemy extends Enemy {
 
     @Override
     protected void attack() {
-        // star fish attack is a spin attack when he move to the left or right of the player, he will do a spin attack that can hit the player if they are close enough
-        if (isFacingRight) {
-            // Attack to the right
-            if (player.getHitbox().intersects(getAttackHitboxRight())) {
-                player.takeDamage(1);
-            }
-        } else {
-            // Attack to the left
-            if (player.getHitbox().intersects(getAttackHitboxLeft())) {
-                player.takeDamage(1);
+        // attack every 2 seconds move the fish left to right 
+        // move the fish left to right and check if player is in range to attack
+        if (player != null) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastAttackingTime >= 2000) { // Attack every 2 seconds
+                // Check if player is within attack range
+                float distanceToPlayer = Math.abs((x + enemyWidth / 2) - (player.getX() + player.getWidth() / 2));
+                if (distanceToPlayer <= attackRange) {
+                    player.takeDamage(attackDamage);
+                }
+                lastAttackingTime = currentTime;
             }
         }
     }

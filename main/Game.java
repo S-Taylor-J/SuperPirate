@@ -82,7 +82,7 @@ public class Game implements Runnable{
         levelHandler.draw(g, camera);
         player.render(g, camera);
         enemyManager.render(g, camera);
-        uiManager.render(g, 5, 10, 100);
+        uiManager.render(g, player.getHealth(), 10, 100);
     }
     
     public Camera getCamera() {

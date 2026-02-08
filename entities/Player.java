@@ -49,6 +49,12 @@ public class Player extends Entity{
     private long lastAttackingTime = 0;
     private boolean attackChecked = false; // Prevents multiple hits per attack
 
+    //Player data
+    private int health = 5;
+    private boolean alive = true;
+
+     // Reference to enemy manager for attack checks
+
     // Attack range check
     private final int attackRange = 100;
 
@@ -367,5 +373,13 @@ public class Player extends Entity{
     public void takeDamage(int damage) {
         // TODO: Implement player health system
         System.out.println("Player hit! Damage: " + damage);
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getWidth() {
+        return playerWidth;
     }
 }

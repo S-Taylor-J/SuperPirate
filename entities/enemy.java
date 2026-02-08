@@ -84,6 +84,7 @@ public abstract class Enemy extends Entity {
         updatePos();
         updateAnimationTick();
         setAnimation();
+        attack();
     }
 
     /**
@@ -117,10 +118,6 @@ public abstract class Enemy extends Entity {
     }
 
     protected void attack() {
-        // Default attack behavior - can be overridden by subclasses
-        // For example, you could set enemyAction to an attack animation and reset animIndex
-        enemyAction = 1; // Assuming index 1 is attack animation
-        animIndex = 0;
     }
 
     protected void updatePos() {
