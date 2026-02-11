@@ -21,6 +21,7 @@ public class LoadSave {
 
     //Tilesets
     public static final String TERRAIN_TILESET = "/res/Tilesets/Terrain.png";
+    public static final String SHIP_TILESET = "/res/Tilesets/ship.png";
 
     public static BufferedImage getSpriteAtlas(String fileName) {
         BufferedImage img = null;

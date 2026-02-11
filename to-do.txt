@@ -1,0 +1,26 @@
+player and enemy:
+    set spawn points
+    add more enemy types with different behaviors
+
+levels :
+    add level transitions
+    add level load screens
+
+
+map:
+    add decoration
+    add npc 
+    add new levels with different tilesets
+
+
+game:
+    add music
+    add sound effects
+    add menu screen
+    add pause screen
+    add game over screen
+
+
+
+background image moving with player probably due to camera 
+    
