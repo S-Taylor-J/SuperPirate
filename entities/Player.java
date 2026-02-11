@@ -40,7 +40,7 @@ public class Player extends Entity{
     // Gravity and jumping
     private float airSpeed = 0f;
     private final float gravity = 0.04f;
-    private final float jumpSpeed = -5f;
+    private final float jumpSpeed = -4.2f;
     private final float maxFallSpeed = 10f;
     private boolean inAir = false;
 
@@ -412,7 +412,15 @@ public class Player extends Entity{
             health -= damage;
             invulnerable = true;
             lastDamageTime = now;
+            knockBack();
         }
+    }
+
+    // TODO - Add invulnerability flashing effect in render method and knock back effect in updatePos method when taking damage
+    private void knockBack(){
+        x += isFacingRight ? -30: 30; // Knock back in opposite direction of facing
+        y -= 30; // Knock up slightly
+
     }
 
 }

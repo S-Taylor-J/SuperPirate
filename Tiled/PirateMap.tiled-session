@@ -3,18 +3,43 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "Level1.js",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
+        "Grassland.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Level1.js": {
+            "scale": 1.0813,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2362.4341070933137,
+                "y": 412.4664755387035
+            }
+        },
+        "Level1.js#Grassland": {
+            "scaleInDock": 1
+        },
+        "Terrain.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
     },
-    "last.imagePath": "C:/Users/Taylor/Downloads/Treasure Hunters/Treasure Hunters/Pirate Ship/Sprites/Tilesets",
+    "last.imagePath": "/Users/taylorsantos/Desktop/Obliti/res/Tilesets",
     "map.lastUsedFormat": "js",
     "map.width": 100,
     "openFiles": [
+        "Level1.js",
+        "Grassland.tsx"
     ],
     "project": "PirateMap.tiled-project",
     "recentFiles": [
+        "Grassland.tsx",
+        "Level1.js",
+        "Terrain.tsx"
     ],
     "tileset.lastUsedFormat": "tsx"
 }

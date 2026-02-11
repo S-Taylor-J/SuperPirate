@@ -4,17 +4,12 @@ import java.awt.image.BufferedImage;
 import levels.Level;
 import static utilz.EnemyConstants.PinkFishEnemyConstants.*;
 import utilz.LoadSave;
-
-/**
- * PinkFish enemy type - a basic enemy with idle animation.
- * Customize attributes and animations for this specific enemy type.
- */
 public class PinkFishEnemy extends Enemy {
     private long lastAttackingTime = 0;
     private final long attackCoolDown = 5000;
     private long attackAnimationStartTime = 0;
     private final long attackAnimationDuration = 1000; 
-    private final int attackRange = 50;
+    private final int attackRange = 200;
 
     public PinkFishEnemy(float x, float y, Level level) {
         super(x, y, level);
@@ -22,9 +17,6 @@ public class PinkFishEnemy extends Enemy {
         loadAnimations();
     }
 
-    /**
-     * Set PinkFish-specific attributes
-     */
     private void initAttributes() {
         // Health
         this.health = 3;
@@ -74,11 +66,11 @@ public class PinkFishEnemy extends Enemy {
                 enemyAction = ATTACK;
                 attackAnimationStartTime = currentTime;
 
-                // Check if player is within attack range
-                float distanceToPlayer = Math.abs((x + enemyWidth / 2) - (player.getX() + player.getWidth() / 2));
-                if (distanceToPlayer <= attackRange) {
-                    player.takeDamage(attackDamage);
-                }
+                // // Check if player is within attack range
+                // float distanceToPlayer = Math.abs((x + enemyWidth / 2) - (player.getX() + player.getWidth() / 2));
+                // if (distanceToPlayer <= attackRange && player.getHitbox().intersects(getHitbox())) {
+                //     player.takeDamage(attackDamage);
+                // }
                 lastAttackingTime = currentTime;
                 
             }
@@ -102,8 +94,9 @@ public class PinkFishEnemy extends Enemy {
     }
 
     private void attackMovement(){
-        // Move left or right unless collides with blocks
-        if (attacking){
+        // Move towards the player while attacking if they are within attack range
+        float distanceToPlayer = Math.abs((x + enemyWidth / 2) - (player.getX() + player.getWidth() / 2));
+        if(distanceToPlayer <= attackRange && attacking){
             if (x < player.getX()) {
                 x += enemySpeed; // Move right
             } else if (x > player.getX()) {
