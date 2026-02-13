@@ -2,6 +2,7 @@ package main;
 
 import entities.EnemyManager;
 import entities.Player;
+import entities.SpawnPoint;
 import java.awt.Graphics;
 import levels.LevelHandler;
 import ui.UIManager;
@@ -47,19 +48,31 @@ public class Game implements Runnable{
 
     private void initClasses() {
         levelHandler = new LevelHandler(this);
-        player = new Player(200, 500, levelHandler.getLevel());
+        
+        // Get player spawn point from level data
+        SpawnPoint playerSpawn = levelHandler.getLevel().getPlayerSpawn();
+        int playerX = playerSpawn != null ? playerSpawn.getX() : 200;
+        int playerY = playerSpawn != null ? playerSpawn.getY() : 500;
+        player = new Player(playerX, playerY, levelHandler.getLevel());
+        
         uiManager = new UIManager(player);
-        // Initialize enemy manager and spawn enemies
+        
+        // Initialize enemy manager
         enemyManager = new EnemyManager(levelHandler.getLevel());
         
         // Connect player and enemy manager (bidirectional)
         player.setEnemyManager(enemyManager);
         enemyManager.setPlayer(player);
         
-        // Spawn enemies
-        enemyManager.spawnPinkFish(200, 50);
-        enemyManager.spawnPinkFish(400, 50);
-        enemyManager.spawnPinkFish(600, 50);
+        // Spawn enemies from level spawn points
+        SpawnPoint[] enemySpawns = levelHandler.getLevel().getEnemySpawns();
+        for (SpawnPoint spawn : enemySpawns) {
+            switch (spawn.getEntityType()) {
+                case SpawnPoint.PINKFISH -> enemyManager.spawnPinkFish(spawn.getX(), spawn.getY());
+                // Add more enemy types here as needed:
+                // case SpawnPoint.PIRATE -> enemyManager.spawnPirate(spawn.getX(), spawn.getY());
+            }
+        }
         
         // Pass FULL MAP dimensions to camera
         camera = new Camera(MAP_TILES_WIDTH, MAP_TILES_HEIGHT);

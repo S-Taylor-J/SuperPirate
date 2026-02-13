@@ -32,16 +32,30 @@ public class LevelHandler {
 
     private void createLevel(int levelIndex) {
         int[][] levelData;
+        int[][] backgroundData = null; 
+        int[][] decorationData = null;
+        
         switch(levelIndex) {
             case 1:
                 levelData = levels.level1;
+                backgroundData = levels.level1B;  // Level 1 has a background tile map
                 break;
             case 0:
             default:
                 levelData = levels.level0;
+                // Level 0 has no background tile map
                 break;
         }
-        level = new Level(levelData);
+        
+        if (backgroundData != null) {
+            level = new Level(levelData, backgroundData, decorationData);
+        } else {
+            level = new Level(levelData);
+        }
+        
+        // Load spawn points for this level
+        level.setPlayerSpawn(SpawnData.getPlayerSpawn(levelIndex));
+        level.setEnemySpawns(SpawnData.getEnemySpawns(levelIndex));
     }
 
     private void importTilesetForLevel(int levelIndex) {
@@ -88,6 +102,27 @@ public class LevelHandler {
         endX = Math.min(level.getMaxTileWidth(), endX);
         endY = Math.min(level.getMaxTileHeight(), endY);
         
+        // Draw background layer first (if this level has one)
+        if (level.hasBackground()) {
+            int bgEndX = Math.min(level.getBackgroundMaxTileWidth(), endX);
+            int bgEndY = Math.min(level.getBackgroundMaxTileHeight(), endY);
+            
+            for (int y = startY; y < bgEndY; y++) {
+                for (int x = startX; x < bgEndX; x++) {
+                    int index = level.getBackgroundSpriteIndex(x, y);
+                    if (index < 0 || index >= levelSprite.length)
+                        continue;
+                    g.drawImage(levelSprite[index], 
+                        (int)(x * Game.TILES_SIZE - camera.getXOffset()), 
+                        (int)(y * Game.TILES_SIZE - camera.getYOffset()), 
+                        (int)Game.TILES_SIZE, 
+                        (int)Game.TILES_SIZE, 
+                        null);
+                }
+            }
+        }
+        
+        // Draw foreground layer
         for (int y = startY; y < endY; y++) {
             for (int x = startX; x < endX; x++) {
                 int index = level.getSpriteIndex(x, y);
@@ -100,6 +135,23 @@ public class LevelHandler {
                     (int)Game.TILES_SIZE, 
                     null);
             }
+        }
+
+        if (level.hasDecoration()) { 
+            int decEndX = Math.min(level.getDecorationMaxTileWidth(), endX); 
+            int decEndY = Math.min(level.getDecorationMaxTileHeight(), endY); 
+            for (int y = startY; y < decEndY; y++) { 
+                for (int x = startX; x < decEndX; x++) { 
+                    int index = level.getDecorationSpriteIndex(x, y); 
+                    if (index < 0 || index >= levelSprite.length) 
+                        continue;
+                    g.drawImage(levelSprite[index], 
+                        (int)(x * Game.TILES_SIZE - camera.getXOffset()), 
+                        (int)(y * Game.TILES_SIZE - camera.getYOffset()), 
+                        (int)Game.TILES_SIZE, (int)Game.TILES_SIZE, 
+                        null); 
+                } 
+            } 
         }
     }
 

@@ -1,5 +1,4 @@
 player and enemy:
-    set spawn points
     add more enemy types with different behaviors
 
 levels :
@@ -8,9 +7,7 @@ levels :
 
 
 map:
-    add decoration
     add npc 
-    add new levels with different tilesets
 
 
 game:
