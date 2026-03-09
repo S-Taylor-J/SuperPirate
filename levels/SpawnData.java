@@ -16,6 +16,47 @@ import entities.SpawnPoint;
  */
 public class SpawnData {
 
+    // ==================== LEVEL EXIT DATA ====================
+    // Stores exit zone position (in tiles) and next level index
+    
+    public static class LevelExit {
+        public final int tileX, tileY;      // Exit zone position (tile coords)
+        public final int width, height;      // Exit zone size (in tiles)
+        public final int nextLevelIndex;     // Level to load (-1 = game complete)
+        
+        public LevelExit(int tileX, int tileY, int width, int height, int nextLevelIndex) {
+            this.tileX = tileX;
+            this.tileY = tileY;
+            this.width = width;
+            this.height = height;
+            this.nextLevelIndex = nextLevelIndex;
+        }
+        
+        // Get pixel coordinates for collision detection
+        public int getPixelX() { return tileX * 32; }
+        public int getPixelY() { return tileY * 32; }
+        public int getPixelWidth() { return width * 32; }
+        public int getPixelHeight() { return height * 32; }
+        
+        // Check if a position (in pixels) is inside the exit zone
+        public boolean contains(float px, float py) {
+            return px >= getPixelX() && px < getPixelX() + getPixelWidth()
+                && py >= getPixelY() && py < getPixelY() + getPixelHeight();
+        }
+        
+        // Check if a hitbox overlaps with the exit zone
+        public boolean intersects(float px, float py, int hitboxWidth, int hitboxHeight) {
+            return px + hitboxWidth > getPixelX() && px < getPixelX() + getPixelWidth()
+                && py + hitboxHeight > getPixelY() && py < getPixelY() + getPixelHeight();
+        }
+    }
+    
+    // Level 0 exit - leads to Level 1
+    public static final LevelExit LEVEL0_EXIT = new LevelExit(95, 10, 2, 4, 1);
+    
+    // Level 1 exit - leads to Level 2 (or -1 for game complete)
+    public static final LevelExit LEVEL1_EXIT = new LevelExit(58, 10, 2, 4, -1);
+
     // ==================== LEVEL 0 SPAWN POINTS ====================
     // Grassland / Island level
     
@@ -74,5 +115,26 @@ public class SpawnData {
         all[0] = playerSpawn;
         System.arraycopy(enemySpawns, 0, all, 1, enemySpawns.length);
         return all;
+    }
+    
+    // ==================== LEVEL EXIT METHODS ====================
+    
+    // Get level exit for a level
+    public static LevelExit getLevelExit(int levelIndex) {
+        return switch (levelIndex) {
+            case 0 -> LEVEL0_EXIT;
+            case 1 -> LEVEL1_EXIT;
+            default -> null;
+        };
+    }
+    
+    // Check if level index is valid (not game complete)
+    public static boolean hasNextLevel(int nextLevelIndex) {
+        return nextLevelIndex >= 0;
+    }
+    
+    // Get total number of levels
+    public static int getTotalLevels() {
+        return 2;
     }
 }

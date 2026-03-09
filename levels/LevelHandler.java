@@ -21,7 +21,7 @@ public class LevelHandler {
 
     public LevelHandler(Game game){
         this.game = game;
-        loadLevel(1);
+        loadLevel(currentLevelIndex);
     }
 
     public void loadLevel(int levelIndex) {
@@ -56,6 +56,9 @@ public class LevelHandler {
         // Load spawn points for this level
         level.setPlayerSpawn(SpawnData.getPlayerSpawn(levelIndex));
         level.setEnemySpawns(SpawnData.getEnemySpawns(levelIndex));
+
+        // Load collectable points for this level
+        level.setCollectablePoints(CollectableData.getCollectables(levelIndex));
     }
 
     private void importTilesetForLevel(int levelIndex) {
@@ -135,6 +138,28 @@ public class LevelHandler {
                     (int)Game.TILES_SIZE, 
                     null);
             }
+        }
+
+        // Draw collectable items as squares
+        entities.CollectablePoint[] collectables = level.getCollectablePoints();
+        for (entities.CollectablePoint c : collectables) {
+            int drawX = (int)(c.getX() - camera.getXOffset());
+            int drawY = (int)(c.getY() - camera.getYOffset());
+            int size = (int)Game.TILES_SIZE;
+            switch (c.getType()) {
+                case entities.CollectablePoint.GOLD -> {
+                    g.setColor(java.awt.Color.YELLOW);
+                }
+                case entities.CollectablePoint.POWERUP -> {
+                    g.setColor(java.awt.Color.CYAN);
+                }
+                default -> {
+                    g.setColor(java.awt.Color.GRAY);
+                }
+            }
+            g.fillRect(drawX, drawY, size, size);
+            g.setColor(java.awt.Color.BLACK);
+            g.drawRect(drawX, drawY, size, size);
         }
 
         if (level.hasDecoration()) { 

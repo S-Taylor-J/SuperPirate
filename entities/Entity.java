@@ -12,4 +12,13 @@ public abstract class Entity {
         this.y = y;
         this.level = level;
     }
+    
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+    
+    public void setLevel(Level level) {
+        this.level = level;
+    }
 }

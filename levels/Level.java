@@ -12,12 +12,16 @@ public class Level {
     private SpawnPoint playerSpawn;
     private SpawnPoint[] enemySpawns;
 
+    // Collectable points
+    private entities.CollectablePoint[] collectablePoints;
+
     public Level(int[][] levelData) {
         this.levelData = levelData;
         this.backgroundData = null;
         this.decorationData = null;
         this.playerSpawn = null;
         this.enemySpawns = new SpawnPoint[0];
+        this.collectablePoints = new entities.CollectablePoint[0];
     }
 
     public Level(int[][] levelData, int[][] backgroundData, int[][] decorationData) {
@@ -26,6 +30,7 @@ public class Level {
         this.decorationData = decorationData;
         this.playerSpawn = null;
         this.enemySpawns = new SpawnPoint[0];
+        this.collectablePoints = new entities.CollectablePoint[0];
     }
 
     // -- Spawn point methods --
@@ -42,8 +47,26 @@ public class Level {
         this.enemySpawns = spawns != null ? spawns : new SpawnPoint[0];
     }
 
+
     public SpawnPoint[] getEnemySpawns() {
         return enemySpawns;
+    }
+
+    // -- Collectable point methods --
+    public void setCollectablePoints(entities.CollectablePoint[] points) {
+        this.collectablePoints = points != null ? points : new entities.CollectablePoint[0];
+    }
+
+
+    public entities.CollectablePoint[] getCollectablePoints() {
+        return collectablePoints;
+    }
+
+    // Remove a collectable by reference
+    public void removeCollectable(entities.CollectablePoint c) {
+        java.util.List<entities.CollectablePoint> list = new java.util.ArrayList<>(java.util.Arrays.asList(collectablePoints));
+        list.remove(c);
+        collectablePoints = list.toArray(new entities.CollectablePoint[0]);
     }
 
     // -- Map data --

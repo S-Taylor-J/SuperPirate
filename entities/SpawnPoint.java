@@ -7,6 +7,7 @@ public class SpawnPoint {
     public static final int PINKFISH = 1;
     public static final int PIRATE = 2;
 
+
     private int x, y;
     private int entityType;
 
