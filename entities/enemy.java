@@ -10,29 +10,27 @@ import static utilz.EnemyConstants.PinkFishEnemyConstants.*;
 import utilz.HelpMethod;
 import utilz.LoadSave;
 
-/**
- * Abstract base class for all enemy types.
- * Subclasses must implement loadAnimations() and provide their own attributes.
- */
+// Abstract base class for all enemy types.
+
 public abstract class Enemy extends Entity {
     // Animations - protected so subclasses can access
     protected BufferedImage[][] animations;
     protected int animTick, animIndex;
     protected int animSpeed = 15;
-    protected int enemyAction = IDLE; // 0 = idle
+    protected int enemyAction = IDLE;
     protected boolean moving = false;
     protected boolean attacking = false;
 
-    // Frame dimensions - override in subclass if different
+    // Frame dimensions
     protected int frameWidth = 34;
     protected int frameHeight = 30;
 
-    // Enemy attributes - override in subclass for different stats
+    // Enemy attributes
     protected int enemyWidth = 80;
     protected int enemyHeight = 70;
     protected float enemySpeed = 1.0f;
 
-    // Enemy Hitbox - override in subclass if different
+    // Enemy Hitbox
     protected int hitboxOffsetX = 15;
     protected int hitboxOffsetY = 15;
     protected int hitBoxWidth = 50;
@@ -52,35 +50,65 @@ public abstract class Enemy extends Entity {
     // Direction
     protected boolean isFacingRight = true;
 
-    // Animation frame counts per action - override in subclass
-    protected int[] animationFrameCounts = {6}; // Default: 6 frames for idle
+    // Animation frame counts per action
+    protected int[] animationFrameCounts = {6}; // Default to 6 frames for all actions
 
     // Attack properties
     protected int attackRange = 50;
     protected int attackDamage = 1;
     protected Player player; // Reference to player for attack checks
 
+    // Patrol behavior
+    protected boolean patrolEnabled = false;
+    protected float patrolLeftBound;
+    protected float patrolRightBound;
+    protected float patrolDistance = 400f; // Default patrol distance from spawn
+
     public Enemy(float x, float y, Level level) {
         super(x, y, level);
-        // Subclass must call loadAnimations() in their constructor
+        // Initialize patrol bounds based on spawn position
+        patrolLeftBound = x - patrolDistance;
+        patrolRightBound = x + patrolDistance;
     }
 
-    /**
-     * Set player reference for attack checks
-     */
+    // Set player reference for attack checks
     public void setPlayer(Player player) {
         this.player = player;
     }
 
-    /**
-     * Abstract method - each enemy type must load its own animations
-     */
+    // Enable patrol behavior with custom distance
+    public void enablePatrol(float distance) {
+        this.patrolEnabled = true;
+        this.patrolDistance = distance;
+        this.patrolLeftBound = x - distance;
+        this.patrolRightBound = x + distance;
+    }
+
+    
+    // Enable patrol behavior with default distance
+    public void enablePatrol() {
+        enablePatrol(patrolDistance);
+    }
+
+    // Check if attack hits player and deal damage
+    protected void checkAttackHit() {
+        if (player != null && attacking) {
+            Rectangle attackBox = isFacingRight ? getAttackHitboxRight() : getAttackHitboxLeft();
+            Rectangle playerHitbox = player.getHitbox();
+            if (attackBox.intersects(playerHitbox)) {
+                player.takeDamage(attackDamage);
+            }
+        }
+    }
+
+    // Abstract method - each enemy type must load its own animations
     protected abstract void loadAnimations();
 
-    /**
-     * Get the number of animation actions this enemy has (idle, walk, attack, etc.)
-     */
+    // Get the number of animation actions this enemy has (idle, walk, attack, etc.)
     protected abstract int getAnimationCount();
+
+    // Abstract method for attack behavior - to be implemented by each enemy type
+    protected abstract void attack();
 
     public void update() {
         updatePos();
@@ -89,25 +117,19 @@ public abstract class Enemy extends Entity {
         setAnimation();
     }
 
-    /**
-     * Get enemy's hitbox as a Rectangle (for collision checks)
-     */
+    // Get enemy's hitbox as a Rectangle (for collision checks)
     public Rectangle getHitbox() {
         return new Rectangle((int) (x + hitboxOffsetX), (int) (y + hitboxOffsetY), hitBoxWidth, hitBoxHeight);
     }
 
-    /**
-     * Get attack hitbox to the right of the enemy
-     */
+    // Get attack hitbox to the right of the enemy
     protected Rectangle getAttackHitboxRight() {
         int attackX = (int) (x + hitboxOffsetX + hitBoxWidth);
         int attackY = (int) (y + hitboxOffsetY);
         return new Rectangle(attackX, attackY, attackRange, hitBoxHeight);
     }
 
-    /**
-     * Get attack hitbox to the left of the enemy
-     */
+    // Get attack hitbox to the left of the enemy
     protected Rectangle getAttackHitboxLeft() {
         int attackX = (int) (x + hitboxOffsetX - attackRange);
         int attackY = (int) (y + hitboxOffsetY);
@@ -119,13 +141,25 @@ public abstract class Enemy extends Entity {
         return new Rectangle((int) (x - hitboxOffsetX), (int) (y - hitboxOffsetY - 10), barWidth, 5);
     }
 
-    protected void attack() {
-    }
-
     protected void updatePos() {
         moving = false;
         float nextY = y;
         float nextX = x;
+
+        // Patrol movement
+        if (patrolEnabled && !attacking) {
+            if (isFacingRight) {
+                nextX = x + enemySpeed;
+                if (nextX >= patrolRightBound) {
+                    isFacingRight = false;
+                }
+            } else {
+                nextX = x - enemySpeed;
+                if (nextX <= patrolLeftBound) {
+                    isFacingRight = true;
+                }
+            }
+        }
 
         if (inAir) {
             airSpeed += gravity;
@@ -143,6 +177,9 @@ public abstract class Enemy extends Entity {
             if (HelpMethod.canMoveHere(hitBoxX, hitBoxY, hitBoxWidth, hitBoxHeight, level)) {
                 x = nextX;
                 moving = true;
+            } else if (patrolEnabled) {
+                // Hit a wall, reverse direction
+                isFacingRight = !isFacingRight;
             }
         }
 
@@ -217,7 +254,6 @@ public abstract class Enemy extends Entity {
         // Default: idle animation. Override in subclass for more complex behavior.
         enemyAction = IDLE;
     }
-
     protected void updateAnimationTick() {
         animTick++;
         if (animTick >= animSpeed) {
@@ -232,9 +268,7 @@ public abstract class Enemy extends Entity {
         }
     }
 
-    /**
-     * Helper method to load animation frames from a sprite sheet
-     */
+    // Helper method to load animation frames from a sprite sheet
     protected BufferedImage[] loadAnimationFromFile(String path, int frameCount) {
         BufferedImage[] frames = new BufferedImage[frameCount];
         BufferedImage img = LoadSave.getSpriteAtlas(path);

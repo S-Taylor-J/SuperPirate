@@ -7,10 +7,8 @@ import java.util.List;
 import levels.Level;
 import utilz.Camera;
 
-/**
- * Manages all enemies in the game.
- * Handles updating, rendering, and spawning of enemies.
- */
+// Manages all enemies in the game.
+// Handles updating, rendering, and spawning of enemies.
 public class EnemyManager {
 
     private List<Enemy> enemies;
@@ -22,9 +20,7 @@ public class EnemyManager {
         this.enemies = new ArrayList<>();
     }
 
-    /**
-     * Set player reference so enemies can attack
-     */
+    // Set player reference so enemies can attack
     public void setPlayer(Player player) {
         this.player = player;
         // Update all existing enemies with player reference
@@ -33,9 +29,7 @@ public class EnemyManager {
         }
     }
 
-    /**
-     * Add an enemy to the manager
-     */
+    // Add an enemy to the manager
     public void addEnemy(Enemy enemy) {
         if (player != null) {
             enemy.setPlayer(player);
@@ -43,9 +37,7 @@ public class EnemyManager {
         enemies.add(enemy);
     }
 
-    /**
-     * Spawn a PinkFish enemy at the given position
-     */
+    // Spawn a PinkFish enemy at the given position
     public void spawnPinkFish(float x, float y) {
         PinkFishEnemy enemy = new PinkFishEnemy(x, y, level);
         if (player != null) {
@@ -54,9 +46,16 @@ public class EnemyManager {
         enemies.add(enemy);
     }
 
-    /**
-     * Remove dead enemies and update alive ones
-     */
+    // Spawn a Crab enemy at the given position
+    public void spawnCrab(float x, float y) {
+        CrabEnemy enemy = new CrabEnemy(x, y, level);
+        if (player != null) {
+            enemy.setPlayer(player);
+        }
+        enemies.add(enemy);
+    }
+
+    // Remove dead enemies and update alive ones
     public void update() {
         Iterator<Enemy> iterator = enemies.iterator();
         while (iterator.hasNext()) {
@@ -70,9 +69,7 @@ public class EnemyManager {
         }
     }
 
-    /**
-     * Render all alive enemies
-     */
+    // Render all alive enemies
     public void render(Graphics g, Camera camera) {
         for (Enemy enemy : enemies) {
             if (enemy.isAlive()) {
@@ -81,16 +78,12 @@ public class EnemyManager {
         }
     }
 
-    /**
-     * Get the list of all enemies (for collision checks, etc.)
-     */
+    // Get the list of all enemies (for collision checks, etc.)
     public List<Enemy> getEnemies() {
         return enemies;
     }
 
-    /**
-     * Get only alive enemies
-     */
+    // Get only alive enemies
     public List<Enemy> getAliveEnemies() {
         List<Enemy> alive = new ArrayList<>();
         for (Enemy enemy : enemies) {
@@ -101,9 +94,7 @@ public class EnemyManager {
         return alive;
     }
 
-    /**
-     * Get the number of alive enemies
-     */
+    // Get the number of alive enemies
     public int getAliveCount() {
         int count = 0;
         for (Enemy enemy : enemies) {
@@ -114,16 +105,12 @@ public class EnemyManager {
         return count;
     }
 
-    /**
-     * Clear all enemies
-     */
+    // Clear all enemies
     public void clear() {
         enemies.clear();
     }
 
-    /**
-     * Set the level (useful when changing levels)
-     */
+    //Set the level
     public void setLevel(Level level) {
         this.level = level;
     }

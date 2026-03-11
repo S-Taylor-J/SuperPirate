@@ -42,7 +42,6 @@ public class GamePanel extends JPanel {
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        // Draw background at fixed position - completely static, no camera influence
         g.drawImage(backgroundImg, 0, 0, Game.SCREEN_WIDTH, Game.SCREEN_HEIGHT, null);
         game.render(g);
     }

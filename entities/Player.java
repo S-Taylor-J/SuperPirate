@@ -61,10 +61,11 @@ public class Player extends Entity{
     // Attack range check
     private final int attackRange = 100;
 
+    // Player collectibles
     private int coins = 0;
     private int score = 0;
 
-
+    // Reference to EnemyManager for attack checks
     private EnemyManager enemyManager;
     public Player(float x, float y, Level level) {
         super(x, y, level);
@@ -78,7 +79,8 @@ public class Player extends Entity{
     public void update() {
         if (!alive) {
             System.out.println("Player is dead. No update.");
-            return; // Skip update if player is dead
+            // TODO - Add death animation and respawn logic
+            return; 
         }
         updatePos();
         checkAttacks();
@@ -113,7 +115,7 @@ public class Player extends Entity{
 
 
 
-    // --Check Collectible 
+    // -- Check Collectible --
     private void checkCollectibles() {
         entities.CollectablePoint[] collectables = level.getCollectablePoints();
         for (entities.CollectablePoint c : collectables) {
@@ -466,6 +468,12 @@ public class Player extends Entity{
     }
     public void addScore(int amount) {
         score += amount;
+    }
+    public void addHealth(int amount) {
+        health += amount;
+        if (health > 5) {
+            health = 5; 
+        }
     }
 
 }

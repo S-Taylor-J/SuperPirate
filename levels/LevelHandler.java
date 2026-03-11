@@ -38,7 +38,8 @@ public class LevelHandler {
         switch(levelIndex) {
             case 1:
                 levelData = levels.level1;
-                backgroundData = levels.level1B;  // Level 1 has a background tile map
+                backgroundData = levels.level1B; 
+                // decorationData = levels.level1D; //TODO: Add decoration layer for level 1 when ready
                 break;
             case 0:
             default:
@@ -152,6 +153,9 @@ public class LevelHandler {
                 }
                 case entities.CollectablePoint.POWERUP -> {
                     g.setColor(java.awt.Color.CYAN);
+                }
+                case entities.CollectablePoint.HEALTH -> {
+                    g.setColor(java.awt.Color.RED);
                 }
                 default -> {
                     g.setColor(java.awt.Color.GRAY);

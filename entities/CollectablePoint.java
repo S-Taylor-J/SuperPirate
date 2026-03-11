@@ -3,6 +3,7 @@ package entities;
 public class CollectablePoint {
     public static final int GOLD = 0;
     public static final int POWERUP = 1;
+    public static final int HEALTH = 2;
 
     private int x, y;
     private int type;
@@ -26,6 +27,7 @@ public class CollectablePoint {
         String typeName = switch(type) {
             case GOLD -> "Gold";
             case POWERUP -> "Powerup";
+            case HEALTH -> "Health";
             default -> "Unknown";
         };
         return "CollectablePoint[" + typeName + " at (" + x + ", " + y + ")]";

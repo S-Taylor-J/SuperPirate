@@ -39,6 +39,8 @@ public class PinkFishEnemy extends Enemy {
         this.hitBoxWidth = 50;
         this.hitBoxHeight = 50;
 
+        this.patrolEnabled  = true;
+
         this.animationFrameCounts = new int[]{6, 4}; 
     }
 
@@ -46,7 +48,7 @@ public class PinkFishEnemy extends Enemy {
     protected void loadAnimations() {
         animations = new BufferedImage[getAnimationCount()][];
         // Idle animation
-        animations[IDLE] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 9);
+        animations[IDLE] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 6);
         animations[ATTACK] = loadAnimationFromFile(LoadSave.ENEMY_PK_ATTACK, 4);
     }
 
@@ -65,15 +67,14 @@ public class PinkFishEnemy extends Enemy {
                 attacking = true;
                 enemyAction = ATTACK;
                 attackAnimationStartTime = currentTime;
-
-                // // Check if player is within attack range
-                // float distanceToPlayer = Math.abs((x + enemyWidth / 2) - (player.getX() + player.getWidth() / 2));
-                // if (distanceToPlayer <= attackRange && player.getHitbox().intersects(getHitbox())) {
-                //     player.takeDamage(attackDamage);
-                // }
                 lastAttackingTime = currentTime;
-                
             }
+            
+            // Check for attack collision during attack animation
+            if (attacking) {
+                checkAttackHit();
+            }
+            
             if (attacking && (currentTime - attackAnimationStartTime >= attackAnimationDuration)) {
                 attacking = false;
                 enemyAction = IDLE;
@@ -83,7 +84,7 @@ public class PinkFishEnemy extends Enemy {
         attackMovement();
     }
 
-    // Override setAnimation() if you want custom behavior
+    // Override setAnimation()
     @Override
     protected void setAnimation() {
         if (attacking) {

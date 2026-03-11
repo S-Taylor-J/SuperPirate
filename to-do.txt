@@ -1,6 +1,5 @@
 player and enemy:
-    add more enemy types with different behaviors
-    enemy goes through walls to chase player -- fix bug
+    
 
 levels :
     add level load screens

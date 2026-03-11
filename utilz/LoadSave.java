@@ -32,6 +32,15 @@ public class LoadSave {
     public static final String TERRAIN_TILESET = "/res/Tilesets/Terrain.png";
     public static final String SHIP_TILESET = "/res/Tilesets/ship.png";
 
+    // UI Elements
+    public static final String UI_HEALTH_BAR_FRAME = "/res/UI/Life Bars/Big Bars/1.png";
+    public static final String UI_HEALTH_BAR_FILL = "/res/UI/Life Bars/Colors/1.png"; // Red health fill
+    public static final String UI_HEALTH_BAR_BG = "/res/UI/Life Bars/Colors/4.png";   // Dark background
+    public static final String UI_INVENTORY_SLOT = "/res/UI/Inventory/1.png";
+    public static final String UI_SMALL_BANNER = "/res/UI/Small Banner/1.png";
+    public static final String UI_YELLOW_PAPER = "/res/UI/Yellow Paper/1.png";
+    public static final String UI_GOLD_COIN = "/res/Treasure/Gold Coin/01.png";
+
     public static BufferedImage getSpriteAtlas(String fileName) {
         BufferedImage img = null;
         InputStream is = LoadSave.class.getResourceAsStream(fileName);

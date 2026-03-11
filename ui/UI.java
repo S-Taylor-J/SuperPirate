@@ -12,6 +12,11 @@ public class UI {
         coinDisplay = new CoinDisplay();
         scoreDisplay = new ScoreDisplay();
     }
+    
+    public void update(int score) {
+        coinDisplay.update();
+        scoreDisplay.update(score);
+    }
 
     public void draw(Graphics g, int health, int coins, int score) {
         healthBar.draw(g, health);

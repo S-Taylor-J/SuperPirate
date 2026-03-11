@@ -34,20 +34,17 @@ public class Level {
     }
 
     // -- Spawn point methods --
-    
     public void setPlayerSpawn(SpawnPoint spawn) {
         this.playerSpawn = spawn;
     }
-
     public SpawnPoint getPlayerSpawn() {
         return playerSpawn;
     }
 
+    // Enemy spawn points
     public void setEnemySpawns(SpawnPoint[] spawns) {
         this.enemySpawns = spawns != null ? spawns : new SpawnPoint[0];
     }
-
-
     public SpawnPoint[] getEnemySpawns() {
         return enemySpawns;
     }
@@ -56,8 +53,6 @@ public class Level {
     public void setCollectablePoints(entities.CollectablePoint[] points) {
         this.collectablePoints = points != null ? points : new entities.CollectablePoint[0];
     }
-
-
     public entities.CollectablePoint[] getCollectablePoints() {
         return collectablePoints;
     }
@@ -70,11 +65,9 @@ public class Level {
     }
 
     // -- Map data --
-
     public int getSpriteIndex(int x, int y) {
         return levelData[y][x];
     }
-
     public int[][] getLevelData() {
         return levelData;
     }
@@ -127,11 +120,11 @@ public class Level {
     public int getDecorationMaxTileHeight() { 
         return decorationData != null ? decorationData.length : 0; 
     }
+
     // -- Collision --
     public boolean isSolid(int tileX, int tileY){
         return levelData[tileY][tileX] >= 0 ;
     }
-    
     public int getMaxTileWidth(){
         return levelData[0].length;
     }

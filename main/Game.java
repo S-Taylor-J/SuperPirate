@@ -32,10 +32,12 @@ public class Game implements Runnable{
     public final static int VIEWPORT_TILES_WIDTH = 15;   
     public final static int VIEWPORT_TILES_HEIGHT = 10;  
 
-    // Screen dimensions based on VIEWPORT (not full map)
+    // Screen dimensions based on VIEWPORT
     public static int SCREEN_WIDTH = (int)(TILES_SIZE * VIEWPORT_TILES_WIDTH);
     public static int SCREEN_HEIGHT = (int)(TILES_SIZE * VIEWPORT_TILES_HEIGHT);
 
+
+    // Game entities and managers
     private Player player;
     private EnemyManager enemyManager;
     private UIManager uiManager;
@@ -58,7 +60,6 @@ public class Game implements Runnable{
         int playerX = playerSpawn != null ? playerSpawn.getX() : 200;
         int playerY = playerSpawn != null ? playerSpawn.getY() : 500;
         player = new Player(playerX, playerY, levelHandler.getLevel());
-        
         uiManager = new UIManager(player);
         
         // Initialize enemy manager
@@ -73,15 +74,14 @@ public class Game implements Runnable{
         for (SpawnPoint spawn : enemySpawns) {
             switch (spawn.getEntityType()) {
                 case SpawnPoint.PINKFISH -> enemyManager.spawnPinkFish(spawn.getX(), spawn.getY());
-                // Add more enemy types here as needed:
-                // case SpawnPoint.PIRATE -> enemyManager.spawnPirate(spawn.getX(), spawn.getY());
+                case SpawnPoint.CRAB -> enemyManager.spawnCrab(spawn.getX(), spawn.getY());
             }
         }
 
-        // Spawn collectables from level collectable points (to be implemented)
+        // Spawn collectables from level collectable points
         entities.CollectablePoint[] collectablePoints = levelHandler.getLevel().getCollectablePoints();
         // TODO: Add logic to create collectable entities and add to the game world
-
+    
         // Pass FULL MAP dimensions to camera
         camera = new Camera(MAP_TILES_WIDTH, MAP_TILES_HEIGHT);
     }

@@ -16,13 +16,10 @@ import entities.SpawnPoint;
  */
 public class SpawnData {
 
-    // ==================== LEVEL EXIT DATA ====================
-    // Stores exit zone position (in tiles) and next level index
-    
-    public static class LevelExit {
-        public final int tileX, tileY;      // Exit zone position (tile coords)
+        public static class LevelExit {
+        public final int tileX, tileY;      // Exit zone position
         public final int width, height;      // Exit zone size (in tiles)
-        public final int nextLevelIndex;     // Level to load (-1 = game complete)
+        public final int nextLevelIndex;     // Level to load 
         
         public LevelExit(int tileX, int tileY, int width, int height, int nextLevelIndex) {
             this.tileX = tileX;
@@ -50,33 +47,27 @@ public class SpawnData {
                 && py + hitboxHeight > getPixelY() && py < getPixelY() + getPixelHeight();
         }
     }
-    
+    // TODO: add correct level exit points when ready 
     // Level 0 exit - leads to Level 1
     public static final LevelExit LEVEL0_EXIT = new LevelExit(95, 10, 2, 4, 1);
     
     // Level 1 exit - leads to Level 2 (or -1 for game complete)
     public static final LevelExit LEVEL1_EXIT = new LevelExit(58, 10, 2, 4, -1);
 
-    // ==================== LEVEL 0 SPAWN POINTS ====================
-    // Grassland / Island level
-    
+
+    // Grassland level    
     public static final SpawnPoint LEVEL0_PLAYER_SPAWN = 
         SpawnPoint.fromTile(3, 14, SpawnPoint.PLAYER, 32);  // Starting position
-    
+
     public static final SpawnPoint[] LEVEL0_ENEMY_SPAWNS = {
         // PinkFish enemies
         SpawnPoint.fromTile(30, 11, SpawnPoint.PINKFISH, 32),
+        // Crab enemies
         SpawnPoint.fromTile(55, 9, SpawnPoint.CRAB, 32),
         SpawnPoint.fromTile(80, 12, SpawnPoint.CRAB, 32),
-
-        
-        // Pirate enemies (if implemented)
-        // SpawnPoint.fromTile(45, 14, SpawnPoint.PIRATE, 32),
     };
 
-    // ==================== LEVEL 1 SPAWN POINTS ====================
     // Ship interior level
-    
     public static final SpawnPoint LEVEL1_PLAYER_SPAWN = 
         SpawnPoint.fromTile(5, 13, SpawnPoint.PLAYER, 32);  // Ship deck start
     
@@ -87,7 +78,6 @@ public class SpawnData {
         SpawnPoint.fromTile(45, 8, SpawnPoint.PINKFISH, 32),
     };
 
-    // ==================== HELPER METHODS ====================
     
     //  Get player spawn point for a level
     public static SpawnPoint getPlayerSpawn(int levelIndex) {
@@ -117,9 +107,7 @@ public class SpawnData {
         System.arraycopy(enemySpawns, 0, all, 1, enemySpawns.length);
         return all;
     }
-    
-    // ==================== LEVEL EXIT METHODS ====================
-    
+        
     // Get level exit for a level
     public static LevelExit getLevelExit(int levelIndex) {
         return switch (levelIndex) {
