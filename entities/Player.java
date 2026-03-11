@@ -1,6 +1,5 @@
 
 package entities;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -100,16 +99,16 @@ public class Player extends Entity{
         }
 
         // draw hitbox 
-        g.setColor(Color.RED);
-        g.drawRect((int)(x + hitboxOffsetX - camera.getXOffset()), (int)(y + hitboxOffsetY - camera.getYOffset()),hitBoxWidth, hitBoxHeight);
+        // g.setColor(Color.RED);
+        // g.drawRect((int)(x + hitboxOffsetX - camera.getXOffset()), (int)(y + hitboxOffsetY - camera.getYOffset()),hitBoxWidth, hitBoxHeight);
 
         // Draw attack range (solid blue, not translucent)
-        g.setColor(Color.BLUE);
-        float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f - camera.getXOffset();
-        float playerCenterY = y + hitboxOffsetY + hitBoxHeight / 2f - camera.getYOffset();
-        int rangeX = (int) (isFacingRight ? playerCenterX : playerCenterX - attackRange);
-        int rangeWidth = attackRange;
-        g.fillOval(rangeX, (int)(playerCenterY - 20), rangeWidth, 40);
+        // g.setColor(Color.BLUE);
+        // float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f - camera.getXOffset();
+        // float playerCenterY = y + hitboxOffsetY + hitBoxHeight / 2f - camera.getYOffset();
+        // int rangeX = (int) (isFacingRight ? playerCenterX : playerCenterX - attackRange);
+        // int rangeWidth = attackRange;
+        // g.fillOval(rangeX, (int)(playerCenterY - 20), rangeWidth, 40);
     }
 
 
