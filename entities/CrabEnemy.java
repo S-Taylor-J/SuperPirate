@@ -12,9 +12,9 @@ import utilz.LoadSave;
  *   public static final String ENEMY_PIRATE_IDLE = "/res/enemies/Pirate/idle.png";
  * Then spawn using: enemyManager.addEnemy(new PirateEnemy(x, y, level));
  */
-public class PirateEnemy extends Enemy {
+public class CrabEnemy extends Enemy {
 
-    public PirateEnemy(float x, float y, Level level) {
+    public CrabEnemy(float x, float y, Level level) {
         super(x, y, level);
         initAttributes();
         loadAnimations();
