@@ -3,10 +3,11 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level1.js",
+    "activeFile": "Terrain.tsx",
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "Gold Coin.tsx": {
             "scaleInDock": 1,
@@ -21,11 +22,19 @@
             "scaleInEditor": 1
         },
         "Level1.js": {
+<<<<<<< HEAD
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
                 "x": 355.33333333333326,
                 "y": 546.6666666666665
+=======
+            "scale": 0.2271,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1600.6164685160722,
+                "y": -339.05768383971815
+>>>>>>> 0c5ce445a92e41cd18ded9e80efd8ab8b03ccba0
             }
         },
         "Level1.js#Grassland": {
@@ -33,6 +42,7 @@
             "scaleInEditor": 1
         },
         "Level2.js": {
+<<<<<<< HEAD
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
@@ -40,6 +50,19 @@
                 "y": 340
             }
         },
+=======
+            "scale": 0.5064687499999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 800.6416980317148,
+                "y": 240.8835688282841
+            }
+        },
+        "PirateShipInside.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+>>>>>>> 0c5ce445a92e41cd18ded9e80efd8ab8b03ccba0
         "Ship Tileset.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -63,6 +86,7 @@
     "map.width": 50,
     "openFiles": [
         "Level1.js",
+<<<<<<< HEAD
         "Ship Tileset.tsx",
         "Level2.js",
         "Gold Coin.tsx"
@@ -78,6 +102,26 @@
         "Grassland.tsx",
         "Ship.tsx",
         "Terrain.tsx"
+=======
+        "Level2.js",
+        "PirateShipInside.tsx",
+        "Ship Tileset.tsx",
+        "Ship.tsx",
+        "Spikes.tsx",
+        "Terrain.tsx"
+    ],
+    "project": "PirateMap.tiled-project",
+    "recentFiles": [
+        "Level1.js",
+        "Level2.js",
+        "PirateShipInside.tsx",
+        "Ship Tileset.tsx",
+        "Ship.tsx",
+        "Spikes.tsx",
+        "Terrain.tsx",
+        "Grassland.tsx",
+        "Grass and Trees.tsx"
+>>>>>>> 0c5ce445a92e41cd18ded9e80efd8ab8b03ccba0
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

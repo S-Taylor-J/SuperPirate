@@ -1,18 +1,12 @@
 player and enemy:
-    set spawn points
     add more enemy types with different behaviors
+    enemy goes through walls to chase player -- fix bug
 
 levels :
-    add level transitions
     add level load screens
-
-
-map:
-    add decoration
-    add npc 
-    add new levels with different tilesets
-
-
+    add door to show level exit
+    add level complete screen
+    
 game:
     add music
     add sound effects
@@ -20,7 +14,4 @@ game:
     add pause screen
     add game over screen
 
-
-
-background image moving with player probably due to camera 
     

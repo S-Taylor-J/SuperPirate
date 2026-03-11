@@ -286,7 +286,7 @@ public abstract class Enemy extends Entity {
         System.out.println("Enemy hit! Health: " + health);
         if (health <= 0) {
             alive = false;
-            System.out.println("Enemy defeated!");
+            player.addScore(50); // Award points for defeating enemy
         }
     }
 

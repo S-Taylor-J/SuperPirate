@@ -1,10 +1,10 @@
-package entities;
 
-import java.awt.Color;
+package entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import levels.Level;
+import main.Game;
 import utilz.Camera;
 import static utilz.Constants.PlayerConstants.*;
 import utilz.HelpMethod;
@@ -40,7 +40,7 @@ public class Player extends Entity{
     // Gravity and jumping
     private float airSpeed = 0f;
     private final float gravity = 0.04f;
-    private final float jumpSpeed = -4.2f;
+    private final float jumpSpeed = -4.7f;
     private final float maxFallSpeed = 10f;
     private boolean inAir = false;
 
@@ -60,6 +60,10 @@ public class Player extends Entity{
 
     // Attack range check
     private final int attackRange = 100;
+
+    private int coins = 0;
+    private int score = 0;
+
 
     private EnemyManager enemyManager;
     public Player(float x, float y, Level level) {
@@ -81,6 +85,7 @@ public class Player extends Entity{
         updateAnimationTick();
         setAnimation();
         checkEnemyCollisions();
+        checkCollectibles();
         checkIfAlive();
     }
 
@@ -94,16 +99,41 @@ public class Player extends Entity{
         }
 
         // draw hitbox 
-        g.setColor(Color.RED);
-        g.drawRect((int)(x + hitboxOffsetX - camera.getXOffset()), (int)(y + hitboxOffsetY - camera.getYOffset()),hitBoxWidth, hitBoxHeight);
+        // g.setColor(Color.RED);
+        // g.drawRect((int)(x + hitboxOffsetX - camera.getXOffset()), (int)(y + hitboxOffsetY - camera.getYOffset()),hitBoxWidth, hitBoxHeight);
 
         // Draw attack range (solid blue, not translucent)
-        g.setColor(Color.BLUE);
-        float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f - camera.getXOffset();
-        float playerCenterY = y + hitboxOffsetY + hitBoxHeight / 2f - camera.getYOffset();
-        int rangeX = (int) (isFacingRight ? playerCenterX : playerCenterX - attackRange);
-        int rangeWidth = attackRange;
-        g.fillOval(rangeX, (int)(playerCenterY - 20), rangeWidth, 40);
+        // g.setColor(Color.BLUE);
+        // float playerCenterX = x + hitboxOffsetX + hitBoxWidth / 2f - camera.getXOffset();
+        // float playerCenterY = y + hitboxOffsetY + hitBoxHeight / 2f - camera.getYOffset();
+        // int rangeX = (int) (isFacingRight ? playerCenterX : playerCenterX - attackRange);
+        // int rangeWidth = attackRange;
+        // g.fillOval(rangeX, (int)(playerCenterY - 20), rangeWidth, 40);
+    }
+
+
+
+    // --Check Collectible 
+    private void checkCollectibles() {
+        entities.CollectablePoint[] collectables = level.getCollectablePoints();
+        for (entities.CollectablePoint c : collectables) {
+            Rectangle collectBox = new Rectangle(c.getX(), c.getY(), (int)Game.TILES_SIZE, (int)Game.TILES_SIZE);
+            if (getHitbox().intersects(collectBox)) {
+                // Handle collection based on type
+                switch (c.getType()) {
+                    case entities.CollectablePoint.GOLD -> { 
+                        addCoins(1);
+                        level.removeCollectable(c);
+                        return; 
+                    }
+                    case entities.CollectablePoint.POWERUP -> {
+                        addScore(100);
+                        level.removeCollectable(c);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     // -- Attacking --
@@ -421,6 +451,21 @@ public class Player extends Entity{
         x += isFacingRight ? -30: 30; // Knock back in opposite direction of facing
         y -= 30; // Knock up slightly
 
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+    
+    public void addCoins(int amount) {
+        coins += amount;
+    }
+
+    public int getScore() {
+        return score;
+    }
+    public void addScore(int amount) {
+        score += amount;
     }
 
 }

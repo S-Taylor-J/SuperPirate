@@ -2,8 +2,11 @@ package main;
 
 import entities.EnemyManager;
 import entities.Player;
+import entities.SpawnPoint;
 import java.awt.Graphics;
 import levels.LevelHandler;
+import levels.SpawnData;
+import levels.SpawnData.LevelExit;
 import ui.UIManager;
 import utilz.Camera;
 
@@ -36,6 +39,8 @@ public class Game implements Runnable{
     private Player player;
     private EnemyManager enemyManager;
     private UIManager uiManager;
+    private int currentLevelIndex = 0;
+    private boolean gameComplete = false;
     
     public Game() {
         initClasses();
@@ -47,20 +52,36 @@ public class Game implements Runnable{
 
     private void initClasses() {
         levelHandler = new LevelHandler(this);
-        player = new Player(200, 500, levelHandler.getLevel());
+        
+        // Get player spawn point from level data
+        SpawnPoint playerSpawn = levelHandler.getLevel().getPlayerSpawn();
+        int playerX = playerSpawn != null ? playerSpawn.getX() : 200;
+        int playerY = playerSpawn != null ? playerSpawn.getY() : 500;
+        player = new Player(playerX, playerY, levelHandler.getLevel());
+        
         uiManager = new UIManager(player);
-        // Initialize enemy manager and spawn enemies
+        
+        // Initialize enemy manager
         enemyManager = new EnemyManager(levelHandler.getLevel());
         
         // Connect player and enemy manager (bidirectional)
         player.setEnemyManager(enemyManager);
         enemyManager.setPlayer(player);
         
-        // Spawn enemies
-        enemyManager.spawnPinkFish(200, 50);
-        enemyManager.spawnPinkFish(400, 50);
-        enemyManager.spawnPinkFish(600, 50);
-        
+        // Spawn enemies from level spawn points
+        SpawnPoint[] enemySpawns = levelHandler.getLevel().getEnemySpawns();
+        for (SpawnPoint spawn : enemySpawns) {
+            switch (spawn.getEntityType()) {
+                case SpawnPoint.PINKFISH -> enemyManager.spawnPinkFish(spawn.getX(), spawn.getY());
+                // Add more enemy types here as needed:
+                // case SpawnPoint.PIRATE -> enemyManager.spawnPirate(spawn.getX(), spawn.getY());
+            }
+        }
+
+        // Spawn collectables from level collectable points (to be implemented)
+        entities.CollectablePoint[] collectablePoints = levelHandler.getLevel().getCollectablePoints();
+        // TODO: Add logic to create collectable entities and add to the game world
+
         // Pass FULL MAP dimensions to camera
         camera = new Camera(MAP_TILES_WIDTH, MAP_TILES_HEIGHT);
     }
@@ -71,18 +92,69 @@ public class Game implements Runnable{
     }
 
     public void update() {
+        if (gameComplete) return;
+        
         player.update();
         enemyManager.update();
         camera.update(player);
         levelHandler.update();
         uiManager.update();
+        
+        checkLevelExit();
+    }
+    
+    private void checkLevelExit() {
+        LevelExit exit = SpawnData.getLevelExit(currentLevelIndex);
+        if (exit == null) return;
+        
+        // Check if player hitbox intersects with exit zone
+        if (exit.intersects(player.getX() + 50, player.getY() + 25, 30, 40)) {
+            if (SpawnData.hasNextLevel(exit.nextLevelIndex)) {
+                loadLevel(exit.nextLevelIndex);
+            } else {
+                gameComplete = true;
+                System.out.println("GAME COMPLETE! Congratulations!");
+            }
+        }
+    }
+    
+    public void loadLevel(int levelIndex) {
+        System.out.println("Loading level " + levelIndex + "...");
+        currentLevelIndex = levelIndex;
+        
+        // Load the new level in LevelHandler
+        levelHandler.loadLevel(levelIndex);
+        
+        // Get new player spawn point
+        SpawnPoint playerSpawn = levelHandler.getLevel().getPlayerSpawn();
+        int playerX = playerSpawn != null ? playerSpawn.getX() : 200;
+        int playerY = playerSpawn != null ? playerSpawn.getY() : 500;
+        
+        // Update player position and level reference
+        player.setPosition(playerX, playerY);
+        player.setLevel(levelHandler.getLevel());
+        
+        // Re-initialize enemy manager with new level
+        enemyManager = new EnemyManager(levelHandler.getLevel());
+        player.setEnemyManager(enemyManager);
+        enemyManager.setPlayer(player);
+        
+        // Spawn enemies from new level's spawn points
+        SpawnPoint[] enemySpawns = levelHandler.getLevel().getEnemySpawns();
+        for (SpawnPoint spawn : enemySpawns) {
+            switch (spawn.getEntityType()) {
+                case SpawnPoint.PINKFISH -> enemyManager.spawnPinkFish(spawn.getX(), spawn.getY());
+            }
+        }
+        
+        System.out.println("Level " + levelIndex + " loaded!");
     }
 
     public void render(Graphics g){
         levelHandler.draw(g, camera);
         player.render(g, camera);
         enemyManager.render(g, camera);
-        uiManager.render(g, player.getHealth(), 10, 100);
+        uiManager.render(g, player.getHealth(), player.getCoins(), player.getScore());
     }
     
     public Camera getCamera() {
