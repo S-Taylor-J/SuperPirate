@@ -1,0 +1,61 @@
+# Compiled Java files
+
+*.class
+
+# Logs
+
+*.log
+
+# Package files
+
+*.jar
+*.war
+*.ear
+
+# JVM crash logs
+
+hs_err_pid*
+
+# Build folders
+
+build/
+out/
+target/
+
+# Gradle
+
+.gradle/
+gradle-app.setting
+
+# Maven
+
+.mvn/
+
+# IntelliJ IDEA
+
+.idea/
+*.iml
+
+# Eclipse
+
+.project
+.classpath
+.settings/
+
+# VS Code
+
+.vscode/
+
+# macOS
+
+.DS_Store
+__MACOSX/
+
+# Windows
+
+Thumbs.db
+
+# Temporary files
+
+*.tmp
+*.temp
