@@ -66,8 +66,9 @@ public class SpawnData {
     public static final SpawnPoint[] LEVEL0_ENEMY_SPAWNS = {
         // PinkFish enemies
         SpawnPoint.fromTile(30, 11, SpawnPoint.PINKFISH, 32),
-        SpawnPoint.fromTile(55, 9, SpawnPoint.PINKFISH, 32),
-        SpawnPoint.fromTile(80, 12, SpawnPoint.PINKFISH, 32),
+        SpawnPoint.fromTile(55, 9, SpawnPoint.CRAB, 32),
+        SpawnPoint.fromTile(80, 12, SpawnPoint.CRAB, 32),
+
         
         // Pirate enemies (if implemented)
         // SpawnPoint.fromTile(45, 14, SpawnPoint.PIRATE, 32),

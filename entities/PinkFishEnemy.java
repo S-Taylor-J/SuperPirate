@@ -46,7 +46,7 @@ public class PinkFishEnemy extends Enemy {
     protected void loadAnimations() {
         animations = new BufferedImage[getAnimationCount()][];
         // Idle animation
-        animations[IDLE] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 6);
+        animations[IDLE] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 9);
         animations[ATTACK] = loadAnimationFromFile(LoadSave.ENEMY_PK_ATTACK, 4);
     }
 

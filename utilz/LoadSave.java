@@ -18,6 +18,15 @@ public class LoadSave {
     public static final String ENEMY_PK_IDLE = "/res/enemies/PinkFish/idle.png";
     public static final String ENEMY_PK_ATTACK = "/res/enemies/PinkFish/attack.png";
 
+    //Enemy (Crab Enemy) sprites 
+    public static final String ENEMY_CRAB_IDLE = "/res/enemies/Crab/idle.png";
+    public static final String ENEMY_CRAB_RUN = "/res/enemies/Crab/run.png";
+    public static final String ENEMY_CRAB_ATTACK = "/res/enemies/Crab/attack.png";
+    public static final String ENEMY_CRAB_DEATH = "/res/enemies/Crab/death.png";
+    public static final String ENEMY_CRAB_HIT = "/res/enemies/Crab/hit.png";
+    
+
+
 
     //Tilesets
     public static final String TERRAIN_TILESET = "/res/Tilesets/Terrain.png";

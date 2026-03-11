@@ -4,14 +4,6 @@ import java.awt.image.BufferedImage;
 import levels.Level;
 import utilz.LoadSave;
 
-/**
- * Example of a second enemy type - a Pirate enemy.
- * This shows how to create a new enemy type with different attributes and animations.
- * 
- * To use: Add a sprite path constant to LoadSave.java, e.g.:
- *   public static final String ENEMY_PIRATE_IDLE = "/res/enemies/Pirate/idle.png";
- * Then spawn using: enemyManager.addEnemy(new PirateEnemy(x, y, level));
- */
 public class CrabEnemy extends Enemy {
 
     public CrabEnemy(float x, float y, Level level) {
@@ -20,22 +12,19 @@ public class CrabEnemy extends Enemy {
         loadAnimations();
     }
 
-    /**
-     * Set Pirate-specific attributes - tougher and slower than PinkFish
-     */
     private void initAttributes() {
-        // Health - pirates are tougher
+        // Health - crabs are tougher
         this.health = 5;
         this.maxHealth = 5;
 
-        // Speed - pirates are slower
+        // Speed - crabs are slower
         this.enemySpeed = 0.7f;
 
         // Frame dimensions for sprite sheet (adjust based on your sprite)
-        this.frameWidth = 48;
-        this.frameHeight = 48;
+        this.frameWidth = 72;
+        this.frameHeight = 32;
 
-        // Rendered size - pirates are bigger
+        // Rendered size - crabs are bigger
         this.enemyWidth = 96;
         this.enemyHeight = 96;
 
@@ -54,17 +43,15 @@ public class CrabEnemy extends Enemy {
         animations = new BufferedImage[getAnimationCount()][];
         
         // TODO: Replace with actual sprite paths once you have them
-        // animations[0] = loadAnimationFromFile(LoadSave.ENEMY_PIRATE_IDLE, 4);
-        // animations[1] = loadAnimationFromFile(LoadSave.ENEMY_PIRATE_WALK, 6);
-        // animations[2] = loadAnimationFromFile(LoadSave.ENEMY_PIRATE_ATTACK, 5);
+        animations[0] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_IDLE, 4);
+        animations[1] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_RUN, 6);
+        animations[2] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_ATTACK, 5);
         
-        // For now, use PinkFish sprites as placeholder
-        animations[0] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 6);
     }
 
     @Override
     protected int getAnimationCount() {
-        return 1; // Change to 3 when you have walk and attack animations
+        return 3; // Change to 3 when you have walk and attack animations
     }
 
     /**
@@ -74,7 +61,7 @@ public class CrabEnemy extends Enemy {
     // @Override
     // protected void setAnimation() {
     //     int startAnim = enemyAction;
-    //     
+        
     //     if (isAttacking) {
     //         enemyAction = 2; // attack
     //     } else if (moving) {
@@ -82,7 +69,7 @@ public class CrabEnemy extends Enemy {
     //     } else {
     //         enemyAction = 0; // idle
     //     }
-    //     
+        
     //     // Reset animation index if action changed
     //     if (startAnim != enemyAction) {
     //         animIndex = 0;

@@ -5,7 +5,7 @@ public class SpawnPoint {
     // Entity type constants
     public static final int PLAYER = 0;
     public static final int PINKFISH = 1;
-    public static final int PIRATE = 2;
+    public static final int CRAB = 2;
 
 
     private int x, y;
@@ -46,7 +46,7 @@ public class SpawnPoint {
         String typeName = switch(entityType) {
             case PLAYER -> "Player";
             case PINKFISH -> "PinkFish";
-            case PIRATE -> "Pirate";
+            case CRAB -> "Crab";
             default -> "Unknown";
         };
         return "SpawnPoint[" + typeName + " at (" + x + ", " + y + ")]";
