@@ -391,7 +391,7 @@ public class Player extends Entity{
 
         return distance <= attackRange;
     }
-    
+    // TODO: player attacking isn't working, im pressing e and nothing is happening
     public void setAttacking(boolean isAttacking) {
         if (isAttacking) {
             long now = System.currentTimeMillis();
@@ -402,6 +402,7 @@ public class Player extends Entity{
             }
         } else {
             this.isAttacking = false;
+            attackChecked = false; // Reset so next attack can hit
         }
     }
 
@@ -473,6 +474,27 @@ public class Player extends Entity{
         health += amount;
         if (health > 5) {
             health = 5; 
+        }
+    }
+
+    // Input handling
+    public void keyPressed(java.awt.event.KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case java.awt.event.KeyEvent.VK_A, java.awt.event.KeyEvent.VK_LEFT -> setLeft(true);
+            case java.awt.event.KeyEvent.VK_D, java.awt.event.KeyEvent.VK_RIGHT -> setRight(true);
+            case java.awt.event.KeyEvent.VK_W, java.awt.event.KeyEvent.VK_UP, java.awt.event.KeyEvent.VK_SPACE -> setUp(true);
+            case java.awt.event.KeyEvent.VK_S, java.awt.event.KeyEvent.VK_DOWN -> setDown(true);
+            case java.awt.event.KeyEvent.VK_E -> setAttacking(true);
+        }
+    }
+
+    public void keyReleased(java.awt.event.KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case java.awt.event.KeyEvent.VK_A, java.awt.event.KeyEvent.VK_LEFT -> setLeft(false);
+            case java.awt.event.KeyEvent.VK_D, java.awt.event.KeyEvent.VK_RIGHT -> setRight(false);
+            case java.awt.event.KeyEvent.VK_W, java.awt.event.KeyEvent.VK_UP, java.awt.event.KeyEvent.VK_SPACE -> setUp(false);
+            case java.awt.event.KeyEvent.VK_S, java.awt.event.KeyEvent.VK_DOWN -> setDown(false);
+            case java.awt.event.KeyEvent.VK_E -> setAttacking(false);
         }
     }
 

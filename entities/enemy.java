@@ -6,7 +6,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import levels.Level;
 import utilz.Camera;
-import static utilz.EnemyConstants.PinkFishEnemyConstants.*;
 import utilz.HelpMethod;
 import utilz.LoadSave;
 
@@ -17,9 +16,10 @@ public abstract class Enemy extends Entity {
     protected BufferedImage[][] animations;
     protected int animTick, animIndex;
     protected int animSpeed = 15;
-    protected int enemyAction = IDLE;
+    protected int enemyAction = 0;
     protected boolean moving = false;
     protected boolean attacking = false;
+    protected boolean stunned = false;
 
     // Frame dimensions
     protected int frameWidth = 34;
@@ -40,6 +40,8 @@ public abstract class Enemy extends Entity {
     protected int health = 3;
     protected int maxHealth = 3;
     protected boolean alive = true;
+    protected int stunDuration = 1000;
+    protected long stunStartTime = 0; 
 
     // Gravity and falling
     protected float airSpeed = 0f;
@@ -111,10 +113,19 @@ public abstract class Enemy extends Entity {
     protected abstract void attack();
 
     public void update() {
+        updateStunState();
         updatePos();
         updateAnimationTick();
         attack();
         setAnimation();
+    }
+
+    // Check if stun duration has elapsed and recover
+    protected void updateStunState() {
+        if (stunned && System.currentTimeMillis() - stunStartTime >= stunDuration) {
+            stunned = false;
+            patrolEnabled = true;
+        }
     }
 
     // Get enemy's hitbox as a Rectangle (for collision checks)
@@ -252,7 +263,7 @@ public abstract class Enemy extends Entity {
 
     protected void setAnimation() {
         // Default: idle animation. Override in subclass for more complex behavior.
-        enemyAction = IDLE;
+        enemyAction = 0;
     }
     protected void updateAnimationTick() {
         animTick++;
@@ -317,11 +328,36 @@ public abstract class Enemy extends Entity {
 
     public void takeDamage(int damage) {
         health -= damage;
+        knockBack(); 
         System.out.println("Enemy hit! Health: " + health);
         if (health <= 0) {
             alive = false;
-            player.addScore(50); // Award points for defeating enemy
+            player.addScore(50);
+            enemyAction = 3; 
         }
+    }
+    public void knockBack() {
+        stunned = true;
+        attacking = false;
+        float knockbackStrength = 15f;
+        float newX;
+        
+        if (player.getX() < x) {
+            newX = x + knockbackStrength;
+        } else {
+            newX = x - knockbackStrength;
+        }
+        
+        // Only apply knockback if the new position is valid
+        float hitBoxX = newX + hitboxOffsetX;
+        float hitBoxY = y + hitboxOffsetY;
+        if (HelpMethod.canMoveHere(hitBoxX, hitBoxY, hitBoxWidth, hitBoxHeight, level)) {
+            x = newX;
+        }
+        
+        // Temporarily disable movement and start stun timer
+        patrolEnabled = false;
+        stunStartTime = System.currentTimeMillis();
     }
 
     public boolean isAlive() {

@@ -1,24 +1,22 @@
 package main;
 
-import entities.EnemyManager;
-import entities.Player;
-import entities.SpawnPoint;
+import gamestates.DeathState;
+import gamestates.GameState;
+import gamestates.LevelSelectState;
+import gamestates.LoadingState;
+import gamestates.MenuState;
+import gamestates.PlayingState;
 import java.awt.Graphics;
-import levels.LevelHandler;
-import levels.SpawnData;
-import levels.SpawnData.LevelExit;
-import ui.UIManager;
-import utilz.Camera;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
-public class Game implements Runnable{
+public class Game implements Runnable {
 
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
     private final int FPS_SET = 120;
     private final int UPS_SET = 200;
-    private LevelHandler levelHandler;
-    private Camera camera;
 
     public final static int TILES_DEFAULT_SIZE = 32;
     public final static float SCALE = 2.0f;
@@ -36,129 +34,143 @@ public class Game implements Runnable{
     public static int SCREEN_WIDTH = (int)(TILES_SIZE * VIEWPORT_TILES_WIDTH);
     public static int SCREEN_HEIGHT = (int)(TILES_SIZE * VIEWPORT_TILES_HEIGHT);
 
-
-    // Game entities and managers
-    private Player player;
-    private EnemyManager enemyManager;
-    private UIManager uiManager;
-    private int currentLevelIndex = 0;
-    private boolean gameComplete = false;
+    // Game states
+    private GameState currentState = GameState.MENU;
+    private MenuState menuState;
+    private PlayingState playingState;
+    private DeathState deathState;
+    private LevelSelectState levelSelectState;
+    private LoadingState loadingState;
     
     public Game() {
-        initClasses();
+        initStates();
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
         startGameLoop();
     }
 
-    private void initClasses() {
-        levelHandler = new LevelHandler(this);
-        
-        // Get player spawn point from level data
-        SpawnPoint playerSpawn = levelHandler.getLevel().getPlayerSpawn();
-        int playerX = playerSpawn != null ? playerSpawn.getX() : 200;
-        int playerY = playerSpawn != null ? playerSpawn.getY() : 500;
-        player = new Player(playerX, playerY, levelHandler.getLevel());
-        uiManager = new UIManager(player);
-        
-        // Initialize enemy manager
-        enemyManager = new EnemyManager(levelHandler.getLevel());
-        
-        // Connect player and enemy manager (bidirectional)
-        player.setEnemyManager(enemyManager);
-        enemyManager.setPlayer(player);
-        
-        // Spawn enemies from level spawn points
-        SpawnPoint[] enemySpawns = levelHandler.getLevel().getEnemySpawns();
-        for (SpawnPoint spawn : enemySpawns) {
-            switch (spawn.getEntityType()) {
-                case SpawnPoint.PINKFISH -> enemyManager.spawnPinkFish(spawn.getX(), spawn.getY());
-                case SpawnPoint.CRAB -> enemyManager.spawnCrab(spawn.getX(), spawn.getY());
-            }
-        }
-
-        // Spawn collectables from level collectable points
-        entities.CollectablePoint[] collectablePoints = levelHandler.getLevel().getCollectablePoints();
-        // TODO: Add logic to create collectable entities and add to the game world
-    
-        // Pass FULL MAP dimensions to camera
-        camera = new Camera(MAP_TILES_WIDTH, MAP_TILES_HEIGHT);
+    private void initStates() {
+        menuState = new MenuState(this);
+        playingState = new PlayingState(this);
+        deathState = new DeathState(this);
+        levelSelectState = new LevelSelectState(this);
+        loadingState = new LoadingState(this);
     }
 
-    private void startGameLoop(){
+    private void startGameLoop() {
         gameThread = new Thread(this);
         gameThread.start();
     }
 
     public void update() {
-        if (gameComplete) return;
-        
-        player.update();
-        enemyManager.update();
-        camera.update(player);
-        levelHandler.update();
-        uiManager.update();
-        
-        checkLevelExit();
-    }
-    
-    private void checkLevelExit() {
-        LevelExit exit = SpawnData.getLevelExit(currentLevelIndex);
-        if (exit == null) return;
-        
-        // Check if player hitbox intersects with exit zone
-        if (exit.intersects(player.getX() + 50, player.getY() + 25, 30, 40)) {
-            if (SpawnData.hasNextLevel(exit.nextLevelIndex)) {
-                loadLevel(exit.nextLevelIndex);
-            } else {
-                gameComplete = true;
-                System.out.println("GAME COMPLETE! Congratulations!");
-            }
+        switch (currentState) {
+            case MENU -> menuState.update();
+            case PLAYING -> playingState.update();
+            case DEATH -> deathState.update();
+            case LEVEL_SELECT -> levelSelectState.update();
+            case LOADING -> loadingState.update();
         }
-    }
-    
-    public void loadLevel(int levelIndex) {
-        System.out.println("Loading level " + levelIndex + "...");
-        currentLevelIndex = levelIndex;
-        
-        // Load the new level in LevelHandler
-        levelHandler.loadLevel(levelIndex);
-        
-        // Get new player spawn point
-        SpawnPoint playerSpawn = levelHandler.getLevel().getPlayerSpawn();
-        int playerX = playerSpawn != null ? playerSpawn.getX() : 200;
-        int playerY = playerSpawn != null ? playerSpawn.getY() : 500;
-        
-        // Update player position and level reference
-        player.setPosition(playerX, playerY);
-        player.setLevel(levelHandler.getLevel());
-        
-        // Re-initialize enemy manager with new level
-        enemyManager = new EnemyManager(levelHandler.getLevel());
-        player.setEnemyManager(enemyManager);
-        enemyManager.setPlayer(player);
-        
-        // Spawn enemies from new level's spawn points
-        SpawnPoint[] enemySpawns = levelHandler.getLevel().getEnemySpawns();
-        for (SpawnPoint spawn : enemySpawns) {
-            switch (spawn.getEntityType()) {
-                case SpawnPoint.PINKFISH -> enemyManager.spawnPinkFish(spawn.getX(), spawn.getY());
-            }
-        }
-        
-        System.out.println("Level " + levelIndex + " loaded!");
     }
 
-    public void render(Graphics g){
-        levelHandler.draw(g, camera);
-        player.render(g, camera);
-        enemyManager.render(g, camera);
-        uiManager.render(g, player.getHealth(), player.getCoins(), player.getScore());
+    public void render(Graphics g) {
+        switch (currentState) {
+            case MENU -> menuState.render(g);
+            case PLAYING -> playingState.render(g);
+            case DEATH -> {
+                // Render game behind death screen
+                playingState.render(g);
+                deathState.render(g);
+            }
+            case LEVEL_SELECT -> levelSelectState.render(g);
+            case LOADING -> loadingState.render(g);
+        }
     }
     
-    public Camera getCamera() {
-        return camera;
+    // State management
+    public void setGameState(GameState state) {
+        this.currentState = state;
+        if (state == GameState.DEATH) {
+            deathState.reset();
+        }
+    }
+    
+    public GameState getGameState() {
+        return currentState;
+    }
+    
+    // Start a new game at specified level
+    public void startNewGame(int levelIndex) {
+        playingState.initGame(levelIndex);
+    }
+    
+    // Restart current level
+    public void restartLevel() {
+        int currentLevel = playingState.getCurrentLevelIndex();
+        playingState.initGame(currentLevel);
+        setGameState(GameState.PLAYING);
+    }
+    
+    // Start loading screen for level transition
+    public void startLoading(int levelIndex) {
+        loadingState.startLoading(levelIndex);
+        setGameState(GameState.LOADING);
+    }
+    
+    // Get playing state for level initialization
+    public PlayingState getPlayingState() {
+        return playingState;
+    }
+
+    // Input handling - delegate to current state
+    public void keyPressed(KeyEvent e) {
+        switch (currentState) {
+            case MENU -> menuState.keyPressed(e);
+            case PLAYING -> playingState.keyPressed(e);
+            case DEATH -> deathState.keyPressed(e);
+            case LEVEL_SELECT -> levelSelectState.keyPressed(e);
+            case LOADING -> loadingState.keyPressed(e);
+        }
+    }
+    
+    public void keyReleased(KeyEvent e) {
+        switch (currentState) {
+            case MENU -> menuState.keyReleased(e);
+            case PLAYING -> playingState.keyReleased(e);
+            case DEATH -> deathState.keyReleased(e);
+            case LEVEL_SELECT -> levelSelectState.keyReleased(e);
+            case LOADING -> loadingState.keyReleased(e);
+        }
+    }
+    
+    public void mousePressed(MouseEvent e) {
+        switch (currentState) {
+            case MENU -> menuState.mousePressed(e);
+            case PLAYING -> playingState.mousePressed(e);
+            case DEATH -> deathState.mousePressed(e);
+            case LEVEL_SELECT -> levelSelectState.mousePressed(e);
+            case LOADING -> loadingState.mousePressed(e);
+        }
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+        switch (currentState) {
+            case MENU -> menuState.mouseReleased(e);
+            case PLAYING -> playingState.mouseReleased(e);
+            case DEATH -> deathState.mouseReleased(e);
+            case LEVEL_SELECT -> levelSelectState.mouseReleased(e);
+            case LOADING -> loadingState.mouseReleased(e);
+        }
+    }
+    
+    public void mouseMoved(MouseEvent e) {
+        switch (currentState) {
+            case MENU -> menuState.mouseMoved(e);
+            case PLAYING -> playingState.mouseMoved(e);
+            case DEATH -> deathState.mouseMoved(e);
+            case LEVEL_SELECT -> levelSelectState.mouseMoved(e);
+            case LOADING -> loadingState.mouseMoved(e);
+        }
     }
 
     @Override
@@ -173,23 +185,23 @@ public class Game implements Runnable{
         double deltaU = 0;
         double deltaF = 0;
 
-        while(true){
+        while (true) {
             long currentTime = System.nanoTime();
             deltaU += ((currentTime - previousTime) / timePerUpdate);
             deltaF += ((currentTime - previousTime) / timePerFrame);
             previousTime = currentTime;
             
-            if (deltaU >= 1){
+            if (deltaU >= 1) {
                 update();
                 updates++;
                 deltaU--;
             }
-            if(deltaF >= 1){
+            if (deltaF >= 1) {
                 gamePanel.repaint();
                 frames++;
                 deltaF--;
             }
-            if(System.currentTimeMillis() - lastCheck >= 1000){
+            if (System.currentTimeMillis() - lastCheck >= 1000) {
                 lastCheck = System.currentTimeMillis();
                 System.out.println("FPS: " + frames + " | UPS: " + updates);
                 frames = 0;
@@ -198,11 +210,9 @@ public class Game implements Runnable{
         }
     }
 
-    public void windowFocusLost(){
-        player.resetDirBooleans();
-    }
-
-    public Player getPlayer(){
-        return player;
+    public void windowFocusLost() {
+        if (currentState == GameState.PLAYING && playingState.getPlayer() != null) {
+            playingState.getPlayer().resetDirBooleans();
+        }
     }
 }

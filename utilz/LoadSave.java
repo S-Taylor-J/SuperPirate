@@ -17,6 +17,8 @@ public class LoadSave {
     //Enemy (Pink Fish) sprites
     public static final String ENEMY_PK_IDLE = "/res/enemies/PinkFish/idle.png";
     public static final String ENEMY_PK_ATTACK = "/res/enemies/PinkFish/attack.png";
+    public static final String ENEMY_PK_DEATH = "/res/enemies/PinkFish/death.png";
+    public static final String ENEMY_PK_HIT = "/res/enemies/PinkFish/hit.png";
 
     //Enemy (Crab Enemy) sprites 
     public static final String ENEMY_CRAB_IDLE = "/res/enemies/Crab/idle.png";
@@ -25,8 +27,7 @@ public class LoadSave {
     public static final String ENEMY_CRAB_DEATH = "/res/enemies/Crab/death.png";
     public static final String ENEMY_CRAB_HIT = "/res/enemies/Crab/hit.png";
     
-
-
+    // Collectibles
 
     //Tilesets
     public static final String TERRAIN_TILESET = "/res/Tilesets/Terrain.png";

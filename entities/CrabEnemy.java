@@ -41,23 +41,24 @@ public class CrabEnemy extends Enemy {
         this.hitBoxWidth = 56;
         this.hitBoxHeight = 70;
 
-        // Animation frame counts: [idle, run, attack]
-        this.animationFrameCounts = new int[]{9, 6, 7};
+        // Animation frame counts: [idle, run, attack, death, hit]
+        this.animationFrameCounts = new int[]{9, 6, 7, 4, 4};
         this.patrolEnabled = true;
     }
 
     @Override
     protected void loadAnimations() {
         animations = new BufferedImage[getAnimationCount()][];
-    
         animations[0] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_IDLE, 9);
         animations[1] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_RUN, 6);
-        animations[2] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_ATTACK, 7);        
+        animations[2] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_ATTACK, 7);  
+        animations[3] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_DEATH, 4);
+        animations[4] = loadAnimationFromFile(LoadSave.ENEMY_CRAB_HIT, 4);
     }
 
     @Override
     protected int getAnimationCount() {
-        return 3;
+        return 5;
     }
 
     @Override
@@ -90,7 +91,10 @@ public class CrabEnemy extends Enemy {
             enemyAction = 2; // attack
         } else if (moving) {
             enemyAction = 1; // walk
-        } else {
+        }else if (stunned) {
+            enemyAction = 4; // hit
+        } 
+        else {
             enemyAction = 0; // idle
         }
     

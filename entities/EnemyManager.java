@@ -63,7 +63,6 @@ public class EnemyManager {
             if (enemy.isAlive()) {
                 enemy.update();
             } else {
-                // Optionally: play death animation before removing
                 iterator.remove();
             }
         }

@@ -1,16 +1,11 @@
-player and enemy:
+enemy:
+    stun after being hit by player attack
     
-
 levels :
-    add level load screens
     add door to show level exit
-    add level complete screen
     
 game:
     add music
     add sound effects
-    add menu screen
-    add pause screen
-    add game over screen
 
     

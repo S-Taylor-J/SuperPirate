@@ -2,7 +2,6 @@ package entities;
 
 import java.awt.image.BufferedImage;
 import levels.Level;
-import static utilz.EnemyConstants.PinkFishEnemyConstants.*;
 import utilz.LoadSave;
 public class PinkFishEnemy extends Enemy {
     private long lastAttackingTime = 0;
@@ -41,20 +40,22 @@ public class PinkFishEnemy extends Enemy {
 
         this.patrolEnabled  = true;
 
-        this.animationFrameCounts = new int[]{6, 4}; 
+        this.animationFrameCounts = new int[]{6, 4, 4, 4}; 
     }
 
     @Override
     protected void loadAnimations() {
         animations = new BufferedImage[getAnimationCount()][];
         // Idle animation
-        animations[IDLE] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 6);
-        animations[ATTACK] = loadAnimationFromFile(LoadSave.ENEMY_PK_ATTACK, 4);
+        animations[0] = loadAnimationFromFile(LoadSave.ENEMY_PK_IDLE, 6);
+        animations[1] = loadAnimationFromFile(LoadSave.ENEMY_PK_ATTACK, 4);
+        animations[2] = loadAnimationFromFile(LoadSave.ENEMY_PK_DEATH, 4);
+        animations[3] = loadAnimationFromFile(LoadSave.ENEMY_PK_HIT, 4);
     }
 
     @Override
     protected int getAnimationCount() {
-        return 2; 
+        return 4; 
     }
 
     @Override
@@ -65,7 +66,7 @@ public class PinkFishEnemy extends Enemy {
 
             if (!attacking && cooldownTime >= attackCoolDown) {
                 attacking = true;
-                enemyAction = ATTACK;
+                enemyAction = 1;
                 attackAnimationStartTime = currentTime;
                 lastAttackingTime = currentTime;
             }
@@ -77,7 +78,7 @@ public class PinkFishEnemy extends Enemy {
             
             if (attacking && (currentTime - attackAnimationStartTime >= attackAnimationDuration)) {
                 attacking = false;
-                enemyAction = IDLE;
+                enemyAction = 0;
             }   
     
         }
@@ -88,9 +89,13 @@ public class PinkFishEnemy extends Enemy {
     @Override
     protected void setAnimation() {
         if (attacking) {
-            enemyAction = ATTACK;
+            enemyAction = 1;
+        }else if (!alive) {
+            enemyAction = 2;
+        }else if (stunned) {
+            enemyAction = 3;
         } else {
-            enemyAction = IDLE;
+            enemyAction = 0;
         }
     }
 
