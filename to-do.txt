@@ -1,9 +1,3 @@
-enemy:
-    stun after being hit by player attack
-    
-levels :
-    add door to show level exit
-    
 game:
     add music
     add sound effects

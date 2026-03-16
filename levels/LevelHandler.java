@@ -1,7 +1,9 @@
 package levels;
 
+import entities.CollectablePoint;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import levels.SpawnData.LevelExit;
 import main.Game;
 import utilz.Camera;
 import utilz.LoadSave;
@@ -12,6 +14,18 @@ public class LevelHandler {
     private BufferedImage[] levelSprite;
     private Level level;
     private int currentLevelIndex = 0;
+    private BufferedImage[] collectibleCoinFrames;
+    private BufferedImage[] collectiblePowerupFrames;
+    private BufferedImage[] collectibleHealthFrames;
+    private BufferedImage[] collectibleSkullFrames;
+    private BufferedImage door;
+    private int collectibleAnimTick;
+    private int collectibleAnimSpeed = 20;
+    private int coinAnimIndex;
+    private int powerupAnimIndex;
+    private int healthAnimIndex;
+    private int skullAnimIndex;
+
 
     // Tileset configurations: [columns, rows]
     private static final int[][] TILESET_CONFIG = {
@@ -21,13 +35,75 @@ public class LevelHandler {
 
     public LevelHandler(Game game){
         this.game = game;
+        importCollectibleSprites();
         loadLevel(currentLevelIndex);
+    }
+
+    private void importCollectibleSprites() {
+        collectibleCoinFrames = loadAnimationFrames(LoadSave.COLLECTIBLE_COIN, 16);
+        collectiblePowerupFrames = loadAnimationFrames(LoadSave.COLLECTIBLE_MANA_POTION, 13); 
+        collectibleHealthFrames = loadAnimationFrames(LoadSave.COLLECTIBLE_HEALTH_POTION, 13);
+        collectibleSkullFrames = loadAnimationFrames(LoadSave.COLLECTIBLE_GEM, 24);
+        door = LoadSave.getSpriteAtlas(LoadSave.DOOR);
+    }
+
+    private BufferedImage[] loadAnimationFrames(String path, int frameWidth) {
+        BufferedImage img = LoadSave.getSpriteAtlas(path);
+        if (img == null || frameWidth <= 0 || img.getWidth() < frameWidth) {
+            return null;
+        }
+
+        int frameCount = img.getWidth() / frameWidth;
+        BufferedImage[] frames = new BufferedImage[frameCount];
+        for (int i = 0; i < frameCount; i++) {
+            frames[i] = img.getSubimage(i * frameWidth, 0, frameWidth, img.getHeight());
+        }
+        return frames;
+    }
+
+    private BufferedImage getCurrentCollectibleFrame(int type) {
+        return switch (type) {
+            case CollectablePoint.GOLD -> getFrameOrNull(collectibleCoinFrames, coinAnimIndex);
+            case CollectablePoint.POWERUP -> getFrameOrNull(collectiblePowerupFrames, powerupAnimIndex);
+            case CollectablePoint.HEALTH -> getFrameOrNull(collectibleHealthFrames, healthAnimIndex);
+            case CollectablePoint.GEM -> getFrameOrNull(collectibleSkullFrames, skullAnimIndex);
+            default -> null;
+        };
+    }
+
+    private BufferedImage getFrameOrNull(BufferedImage[] frames, int index) {
+        if (frames == null || frames.length == 0) {
+            return null;
+        }
+        return frames[index % frames.length];
+    }
+
+    private void updateCollectibleAnimations() {
+        collectibleAnimTick++;
+        if (collectibleAnimTick < collectibleAnimSpeed) {
+            return;
+        }
+
+        collectibleAnimTick = 0;
+        if (collectibleCoinFrames != null && collectibleCoinFrames.length > 0) {
+            coinAnimIndex = (coinAnimIndex + 1) % collectibleCoinFrames.length;
+        }
+        if (collectiblePowerupFrames != null && collectiblePowerupFrames.length > 0) {
+            powerupAnimIndex = (powerupAnimIndex + 1) % collectiblePowerupFrames.length;
+        }
+        if (collectibleHealthFrames != null && collectibleHealthFrames.length > 0) {
+            healthAnimIndex = (healthAnimIndex + 1) % collectibleHealthFrames.length;
+        }
+        if (collectibleSkullFrames != null && collectibleSkullFrames.length > 0) {
+            skullAnimIndex = (skullAnimIndex + 1) % collectibleSkullFrames.length;
+        }
     }
 
     public void loadLevel(int levelIndex) {
         this.currentLevelIndex = levelIndex;
         importTilesetForLevel(levelIndex);
         createLevel(levelIndex);
+        LevelExit levelExit = SpawnData.getLevelExit(levelIndex);
     }
 
     private void createLevel(int levelIndex) {
@@ -141,29 +217,35 @@ public class LevelHandler {
             }
         }
 
-        // Draw collectable items as squares
-        entities.CollectablePoint[] collectables = level.getCollectablePoints();
-        for (entities.CollectablePoint c : collectables) {
+        // Draw level exit
+        LevelExit exit = SpawnData.getLevelExit(currentLevelIndex);
+        if (exit != null) {
+            int drawX = (int)(exit.getPixelX() - camera.getXOffset());
+            int drawY = (int)(exit.getPixelY() - camera.getYOffset());
+            int drawWidth = exit.getPixelWidth();
+            int drawHeight = exit.getPixelHeight();
+            g.drawImage(door, drawX, drawY, drawWidth, drawHeight, null);
+        }
+
+
+
+        // Draw collectable items with their own sprites
+        CollectablePoint[] collectables = level.getCollectablePoints();
+        for (CollectablePoint c : collectables) {
             int drawX = (int)(c.getX() - camera.getXOffset());
             int drawY = (int)(c.getY() - camera.getYOffset());
             int size = (int)Game.TILES_SIZE;
-            switch (c.getType()) {
-                case entities.CollectablePoint.GOLD -> {
-                    g.setColor(java.awt.Color.YELLOW);
-                }
-                case entities.CollectablePoint.POWERUP -> {
-                    g.setColor(java.awt.Color.CYAN);
-                }
-                case entities.CollectablePoint.HEALTH -> {
-                    g.setColor(java.awt.Color.RED);
-                }
-                default -> {
-                    g.setColor(java.awt.Color.GRAY);
-                }
+            BufferedImage sprite = getCurrentCollectibleFrame(c.getType());
+
+            if (sprite != null) {
+                g.drawImage(sprite, drawX, drawY, size, size, null);
+            } else {
+                // Fallback visual if an image is missing.
+                g.setColor(java.awt.Color.GRAY);
+                g.fillRect(drawX, drawY, size, size);
+                g.setColor(java.awt.Color.BLACK);
+                g.drawRect(drawX, drawY, size, size);
             }
-            g.fillRect(drawX, drawY, size, size);
-            g.setColor(java.awt.Color.BLACK);
-            g.drawRect(drawX, drawY, size, size);
         }
 
         if (level.hasDecoration()) { 
@@ -185,7 +267,7 @@ public class LevelHandler {
     }
 
     public void update(){
-
+        updateCollectibleAnimations();
     }
 
     public Level getLevel() {

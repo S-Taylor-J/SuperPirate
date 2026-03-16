@@ -4,6 +4,7 @@ public class CollectablePoint {
     public static final int GOLD = 0;
     public static final int POWERUP = 1;
     public static final int HEALTH = 2;
+    public static final int GEM = 3; 
 
     private int x, y;
     private int type;

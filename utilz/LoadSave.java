@@ -28,10 +28,15 @@ public class LoadSave {
     public static final String ENEMY_CRAB_HIT = "/res/enemies/Crab/hit.png";
     
     // Collectibles
+    public static final String COLLECTIBLE_COIN = "/res/collectibles/coin.png";
+    public static final String COLLECTIBLE_GEM = "/res/collectibles/skull.png";
+    public static final String COLLECTIBLE_HEALTH_POTION = "/res/collectibles/greenPotion.png";
+    public static final String COLLECTIBLE_MANA_POTION = "/res/collectibles/bluePotion.png";
 
     //Tilesets
     public static final String TERRAIN_TILESET = "/res/Tilesets/Terrain.png";
     public static final String SHIP_TILESET = "/res/Tilesets/ship.png";
+    public static final String DOOR = "/res/Tilesets/door.png";
 
     // UI Elements
     public static final String UI_HEALTH_BAR_FRAME = "/res/UI/Life Bars/Big Bars/1.png";

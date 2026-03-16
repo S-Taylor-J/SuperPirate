@@ -6,7 +6,6 @@ import entities.SpawnPoint;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import levels.Level;
 import levels.LevelHandler;
 import levels.SpawnData;
 import levels.SpawnData.LevelExit;

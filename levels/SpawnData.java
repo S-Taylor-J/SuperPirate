@@ -1,19 +1,8 @@
 package levels;
 
 import entities.SpawnPoint;
+import main.Game;
 
-/**
- * Spawn point data for each level.
- * 
- * HOW TO ADD SPAWN POINTS FROM TILED:
- * 1. In Tiled, create an Object Layer called "SpawnPoints"
- * 2. Add Point objects where you want spawns
- * 3. Set a custom property "type" to: "player", "pinkfish", or "pirate"
- * 4. Export the map and copy the object x,y coordinates here
- * 
- * Coordinates are in PIXELS (Tiled exports pixel coordinates by default).
- * For tile-based placement, use: SpawnPoint.fromTile(tileX, tileY, type, 32)
- */
 public class SpawnData {
 
         public static class LevelExit {
@@ -28,12 +17,12 @@ public class SpawnData {
             this.height = height;
             this.nextLevelIndex = nextLevelIndex;
         }
-        
+
         // Get pixel coordinates for collision detection
-        public int getPixelX() { return tileX * 32; }
-        public int getPixelY() { return tileY * 32; }
-        public int getPixelWidth() { return width * 32; }
-        public int getPixelHeight() { return height * 32; }
+        public int getPixelX() { return (int) (tileX * Game.TILES_SIZE); }
+        public int getPixelY() { return (int) (tileY * Game.TILES_SIZE); }
+        public int getPixelWidth() { return (int) (width * Game.TILES_SIZE); }
+        public int getPixelHeight() { return (int) (height * Game.TILES_SIZE); }
         
         // Check if a position (in pixels) is inside the exit zone
         public boolean contains(float px, float py) {
@@ -49,10 +38,10 @@ public class SpawnData {
     }
     // TODO: add correct level exit points when ready 
     // Level 0 exit - leads to Level 1
-    public static final LevelExit LEVEL0_EXIT = new LevelExit(95, 10, 2, 4, 1);
+    public static final LevelExit LEVEL0_EXIT = new LevelExit(95, 10, 2, 2, 1);
     
     // Level 1 exit - leads to Level 2 (or -1 for game complete)
-    public static final LevelExit LEVEL1_EXIT = new LevelExit(58, 10, 2, 4, -1);
+    public static final LevelExit LEVEL1_EXIT = new LevelExit(58, 10, 2, 2, -1);
 
 
     // Grassland level    

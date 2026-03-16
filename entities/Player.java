@@ -79,7 +79,6 @@ public class Player extends Entity{
     public void update() {
         if (!alive) {
             System.out.println("Player is dead. No update.");
-            // TODO - Add death animation and respawn logic
             return; 
         }
         updatePos();
@@ -130,6 +129,16 @@ public class Player extends Entity{
                     }
                     case entities.CollectablePoint.POWERUP -> {
                         addScore(100);
+                        level.removeCollectable(c);
+                        return;
+                    }
+                    case entities.CollectablePoint.HEALTH -> {
+                        addHealth(1);
+                        level.removeCollectable(c);
+                        return;
+                    }
+                    case entities.CollectablePoint.GEM -> {
+                        addScore(500);
                         level.removeCollectable(c);
                         return;
                     }
@@ -391,7 +400,6 @@ public class Player extends Entity{
 
         return distance <= attackRange;
     }
-    // TODO: player attacking isn't working, im pressing e and nothing is happening
     public void setAttacking(boolean isAttacking) {
         if (isAttacking) {
             long now = System.currentTimeMillis();
@@ -449,10 +457,9 @@ public class Player extends Entity{
         }
     }
 
-    // TODO - Add invulnerability flashing effect in render method and knock back effect in updatePos method when taking damage
     private void knockBack(){
-        x += isFacingRight ? -30: 30; // Knock back in opposite direction of facing
-        y -= 30; // Knock up slightly
+        x += isFacingRight ? -30: 30;
+        y -= 30; 
 
     }
 
