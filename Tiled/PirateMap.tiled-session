@@ -14,25 +14,27 @@
             "scale": 0.173078125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1597.5444614967953,
-                "y": 317.7755710029792
+                "x": 1499.3229213686016,
+                "y": 320.664439830279
             }
         },
         "Level1.js#Grassland": {
             "scaleInDock": 1
         },
         "Level2.js": {
-            "scale": 0.2972,
+            "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 822.6783310901749,
-                "y": 235.53162853297437
+                "x": 801,
+                "y": 239
             }
         },
         "Ship Tileset.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 0.75
         }
     },
+    "last.exportedFilePath": "C:/Users/Taylor/OneDrive/school/CS_2ndYear/java/SuperPirate/Tiled",
+    "map.lastUsedExportFilter": "JavaScript map files (*.js)",
     "openFiles": [
         "Level2.js",
         "Level1.js"
