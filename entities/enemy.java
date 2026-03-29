@@ -248,8 +248,8 @@ public abstract class Enemy extends Entity {
         drawHealthBar(g, camera);
 
         // Draw hitbox (for debugging)
-        g.setColor(Color.GREEN);
-        g.drawRect((int) (x + hitboxOffsetX - camera.getXOffset()), (int) (y + hitboxOffsetY - camera.getYOffset()), hitBoxWidth, hitBoxHeight);
+        // g.setColor(Color.GREEN);
+        // g.drawRect((int) (x + hitboxOffsetX - camera.getXOffset()), (int) (y + hitboxOffsetY - camera.getYOffset()), hitBoxWidth, hitBoxHeight);
     }
     
     private void drawHealthBar(Graphics g, Camera camera){

@@ -2,4 +2,11 @@ game:
     add music
     add sound effects
 
+
+map:
+    add decoration 
+    fix level 2
+    add more enemies
+    add more collectibles
+
     

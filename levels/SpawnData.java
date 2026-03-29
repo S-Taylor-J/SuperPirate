@@ -38,7 +38,7 @@ public class SpawnData {
     }
     // TODO: add correct level exit points when ready 
     // Level 0 exit - leads to Level 1
-    public static final LevelExit LEVEL0_EXIT = new LevelExit(95, 10, 2, 2, 1);
+    public static final LevelExit LEVEL0_EXIT = new LevelExit(95, 13, 2, 2, 1);
     
     // Level 1 exit - leads to Level 2 (or -1 for game complete)
     public static final LevelExit LEVEL1_EXIT = new LevelExit(58, 10, 2, 2, -1);
@@ -49,11 +49,18 @@ public class SpawnData {
         SpawnPoint.fromTile(3, 14, SpawnPoint.PLAYER, 32);  // Starting position
 
     public static final SpawnPoint[] LEVEL0_ENEMY_SPAWNS = {
-        // PinkFish enemies
+       // PinkFish enemies 
         SpawnPoint.fromTile(30, 11, SpawnPoint.PINKFISH, 32),
-        // Crab enemies
+        SpawnPoint.fromTile(60, 10, SpawnPoint.PINKFISH, 32),
+        SpawnPoint.fromTile(100, 9, SpawnPoint.PINKFISH, 32),
+        SpawnPoint.fromTile(140, 11, SpawnPoint.PINKFISH, 32),
+
+        // Crab enemies 
         SpawnPoint.fromTile(55, 9, SpawnPoint.CRAB, 32),
         SpawnPoint.fromTile(80, 12, SpawnPoint.CRAB, 32),
+        SpawnPoint.fromTile(110, 13, SpawnPoint.CRAB, 32),
+        SpawnPoint.fromTile(135, 14, SpawnPoint.CRAB, 32),
+        SpawnPoint.fromTile(150, 13, SpawnPoint.CRAB, 32),
     };
 
     // Ship interior level
